@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { UnitCreator } from "../interaction/interaction";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // import { DragControls } from "three/examples/jsm/controls/DragControls";
 @Component({
     selector: "app-canvas",
@@ -29,7 +30,7 @@ export class CanvasComponent implements OnInit {
         this.scene.background = new THREE.Color("white");
         camera.position.set(500, 800, 1300);
         camera.lookAt(0, 0, 0);
-        new OrbitControls(camera, renderer.domElement);
+        // new OrbitControls(camera, renderer.domElement);
         const geometry1 = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         const cube = new THREE.Mesh(geometry1, material);
@@ -41,13 +42,24 @@ export class CanvasComponent implements OnInit {
 
         const plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
         this.scene.add(plane);
+        const rollOver = new UnitCreator(camera, [plane]);
+        this.scene.add(rollOver.rollOverMesh);
 
         const render = (): void => {
             requestAnimationFrame(render);
-
             renderer.render(this.scene, camera);
         };
 
+        function onWindowResize(): void {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            render();
+        }
+
+        window.addEventListener("resize", onWindowResize);
         render();
     }
 }

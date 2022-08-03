@@ -2,13 +2,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "paths": {
-      "builder-lib": [
-        "dist/builder-lib/builder-lib",
-        "dist/builder-lib",
-        "projects/builder-lib"
-      ]
-    },
+   
 
 
     "allowSyntheticDefaultImports": true,
