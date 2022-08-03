@@ -1,5 +1,5 @@
 {
-  "name": "ms-template",
+  "name": "ms-drag-description",
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
@@ -69,12 +69,12 @@
   "main": "babel.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mwideburg/ms-template.git"
+    "url": "git+https://github.com/mwideburg/ms-drag-description.git"
   },
   "author": "michael wideburg",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mwideburg/ms-template/issues"
+    "url": "https://github.com/mwideburg/ms-drag-description/issues"
   },
-  "homepage": "https://github.com/mwideburgms-template#readme"
+  "homepage": "https://github.com/mwideburgms-drag-description#readme"
 }
