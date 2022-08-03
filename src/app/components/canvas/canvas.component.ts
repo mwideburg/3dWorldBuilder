@@ -41,9 +41,10 @@ export class CanvasComponent implements OnInit {
         geometry.rotateX(-Math.PI / 2);
 
         const plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
+        plane.name = "plane";
         this.scene.add(plane);
-        const rollOver = new UnitCreator(camera, [plane]);
-        this.scene.add(rollOver.rollOverMesh);
+        const unitCreator = new UnitCreator(camera, [plane]);
+        this.scene.add(unitCreator.rollOverMesh);
 
         const render = (): void => {
             requestAnimationFrame(render);
@@ -58,6 +59,13 @@ export class CanvasComponent implements OnInit {
 
             render();
         }
+
+        unitCreator.addObject$.subscribe((object: THREE.Object3D) => {
+            this.scene.add(object);
+        });
+        unitCreator.removeObject$.subscribe((object: THREE.Object3D) => {
+            this.scene.remove(object);
+        });
 
         window.addEventListener("resize", onWindowResize);
         render();
