@@ -38,6 +38,13 @@ export class UnitCreator {
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
     }
 
+    public dispose(): void {
+        document.removeEventListener("pointermove", this.onPointerMove);
+        document.removeEventListener("pointerdown", this.onPointerDown);
+        document.removeEventListener("keydown", this.onDocumentKeyDown);
+        document.removeEventListener("keyup", this.onDocumentKeyUp);
+    }
+
     private onPointerMove(event: any): void {
         console.log(this);
         this.pointer.set(

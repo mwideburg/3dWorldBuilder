@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import * as THREE from "three";
-import { UnitCreator } from "../interaction/interaction";
+import { UnitCreator } from "../interaction/unitCreator";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // import { DragControls } from "three/examples/jsm/controls/DragControls";
 @Component({
