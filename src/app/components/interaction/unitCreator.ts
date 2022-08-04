@@ -16,11 +16,14 @@ export class UnitCreator {
 
     removeObject$: Subject<THREE.Object3D> = new Subject();
 
+    scene: THREE.Scene;
+
     isShiftDown: boolean = false;
 
-    constructor(camera: THREE.PerspectiveCamera, objects: THREE.Object3D[]) {
+    constructor(camera: THREE.PerspectiveCamera, objects: THREE.Object3D[], scene: THREE.Scene) {
         this.camera = camera;
         this.objects = objects;
+        this.scene = scene;
         this.onPointerMove = this.onPointerMove.bind(this);
         this.onPointerDown = this.onPointerDown.bind(this);
         this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
@@ -36,17 +39,19 @@ export class UnitCreator {
             transparent: true,
         });
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        this.scene.add(this.rollOverMesh);
     }
 
     public dispose(): void {
+        console.log("DISPOSING UNIT CREATOR");
         document.removeEventListener("pointermove", this.onPointerMove);
         document.removeEventListener("pointerdown", this.onPointerDown);
         document.removeEventListener("keydown", this.onDocumentKeyDown);
         document.removeEventListener("keyup", this.onDocumentKeyUp);
+        this.scene.remove(this.rollOverMesh);
     }
 
     private onPointerMove(event: any): void {
-        console.log(this);
         this.pointer.set(
             (event.clientX / window.innerWidth) * 2 - 1,
             -(event.clientY / window.innerHeight) * 2 + 1,
@@ -87,7 +92,7 @@ export class UnitCreator {
 
             if (this.isShiftDown) {
                 if (intersect.object.name !== "plane") {
-                    this.removeObject$.next(intersect.object);
+                    this.scene.remove(intersect.object);
 
                     this.objects.splice(this.objects.indexOf(intersect.object), 1);
                 }
@@ -95,12 +100,11 @@ export class UnitCreator {
                 // create cube
             } else {
                 const voxel = new Cube();
-                console.log(voxel);
 
                 if (intersect.face) {
                     voxel.mesh.position.copy(intersect.point).add(intersect.face.normal);
                     voxel.mesh.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
-                    this.addObject$.next(voxel.mesh);
+                    this.scene.add(voxel.mesh);
                 }
 
                 this.objects.push(voxel.mesh);
