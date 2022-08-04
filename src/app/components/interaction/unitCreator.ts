@@ -42,6 +42,21 @@ export class UnitCreator {
         this.scene.add(this.rollOverMesh);
     }
 
+    public activate(): void {
+        document.addEventListener("pointermove", this.onPointerMove);
+        document.addEventListener("pointerdown", this.onPointerDown);
+        document.addEventListener("keydown", this.onDocumentKeyDown);
+        document.addEventListener("keyup", this.onDocumentKeyUp);
+        const rollOverGeo = new THREE.BoxGeometry(50, 50, 50);
+        const rollOverMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            opacity: 0.5,
+            transparent: true,
+        });
+        this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        this.scene.add(this.rollOverMesh);
+    }
+
     public dispose(): void {
         console.log("DISPOSING UNIT CREATOR");
         document.removeEventListener("pointermove", this.onPointerMove);
@@ -92,9 +107,12 @@ export class UnitCreator {
 
             if (this.isShiftDown) {
                 if (intersect.object.name !== "plane") {
-                    this.scene.remove(intersect.object);
+                    if (intersect.object.parent && intersect.object.parent.name === "cube") {
+                        this.scene.remove(intersect.object.parent);
 
-                    this.objects.splice(this.objects.indexOf(intersect.object), 1);
+                        this.objects.splice(this.objects.indexOf(intersect.object), 1);
+                        this.removeObject$.next(intersect.object);
+                    }
                 }
 
                 // create cube
@@ -102,11 +120,12 @@ export class UnitCreator {
                 const voxel = new Cube();
 
                 if (intersect.face) {
-                    voxel.mesh.position.copy(intersect.point).add(intersect.face.normal);
-                    voxel.mesh.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
-                    this.scene.add(voxel.mesh);
+                    voxel.group.position.copy(intersect.point).add(intersect.face.normal);
+                    voxel.group.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+                    this.scene.add(voxel.group);
                 }
 
+                this.addObject$.next(voxel.mesh);
                 this.objects.push(voxel.mesh);
             }
         }

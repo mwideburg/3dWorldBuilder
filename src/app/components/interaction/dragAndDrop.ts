@@ -24,14 +24,17 @@ export class DragAndDrop {
         scene: THREE.Scene,
     ) {
         this.objects = objects;
-        this.controls = new DragControls([...objects], camera, renderer.domElement);
         this.camera = camera;
         this.group = new THREE.Group();
         this.scene = scene;
         this.scene.add(this.group);
-        document.addEventListener("click", this.onClick);
+        this.controls = new DragControls([...this.objects], camera, renderer.domElement);
+        this.onClick = this.onClick.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
         window.addEventListener("keydown", this.onKeyDown);
         window.addEventListener("keyup", this.onKeyUp);
+        document.addEventListener("click", this.onClick);
     }
 
     public dispose(): void {
@@ -46,6 +49,7 @@ export class DragAndDrop {
         event.preventDefault();
 
         if (this.enableSelection === true) {
+            console.log("SELECTION ENABLED");
             const draggableObjects = this.controls.getObjects();
             draggableObjects.length = 0;
 
@@ -58,13 +62,14 @@ export class DragAndDrop {
 
             if (intersections.length > 0) {
                 const object: any = intersections[0].object;
+                console.log("Object in enabled group", object);
 
-                if (this.group.children.includes(object) === true) {
-                    object.material.emissive.set(0x000000);
-                    this.scene.attach(object);
+                if (this.group.children.includes(object.parent)) {
+                    object.material.color.set(0xaaaaaa);
+                    this.scene.attach(object.parent.name === "cube" ? object.parent : object);
                 } else {
-                    object.material.emissive.set(0xaaaaaa);
-                    this.group.attach(object);
+                    object.material.color.set(0x000000);
+                    this.group.attach(object.parent.name === "cube" ? object.parent : object);
                 }
 
                 this.controls.transformGroup = true;
@@ -72,6 +77,7 @@ export class DragAndDrop {
             }
 
             if (this.group.children.length === 0) {
+                console.log("hey");
                 this.controls.transformGroup = false;
                 draggableObjects.push(...this.objects);
             }

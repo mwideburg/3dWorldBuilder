@@ -46,11 +46,8 @@ export class CanvasComponent implements OnInit {
         const plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
         plane.name = "plane";
         this.scene.add(plane);
-        let currentControls: Orbit | UnitCreator | DragAndDrop = new UnitCreator(
-            camera,
-            [plane],
-            this.scene,
-        );
+        const unitCreator = new UnitCreator(camera, [plane], this.scene);
+        let currentControls: Orbit | UnitCreator | DragAndDrop = unitCreator;
 
         function controlSwitch(event: any): void {
             console.log(event.keyCode);
@@ -62,7 +59,17 @@ export class CanvasComponent implements OnInit {
                     break;
                 case 50:
                     currentControls.dispose();
-                    currentControls = new UnitCreator(camera, [plane], scene);
+                    currentControls = unitCreator;
+                    unitCreator.activate();
+                    break;
+                case 51:
+                    currentControls.dispose();
+                    currentControls = new DragAndDrop(
+                        unitCreator.objects.filter((obj) => obj.name !== "plane"),
+                        camera,
+                        renderer,
+                        scene,
+                    );
                     break;
                 default:
                     break;
