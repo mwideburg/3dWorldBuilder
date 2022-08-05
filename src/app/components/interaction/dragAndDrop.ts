@@ -58,6 +58,13 @@ export class DragAndDrop {
         document.removeEventListener("pointerdown", this.onPointerDown);
         document.removeEventListener("keydown", this.onDocumentKeyDown);
         document.removeEventListener("keyup", this.onDocumentKeyUp);
+        this.group.children.forEach((child) => {
+            child.children.forEach((mesh) => {
+                if (mesh instanceof THREE.Mesh && mesh.name === "cubeMesh") {
+                    mesh.material.color.set(0xaaaaaa);
+                }
+            });
+        });
     }
 
     public onPointerMove(event: any): void {
@@ -144,7 +151,7 @@ export class DragAndDrop {
                             this.scene.attach(intersect.object.parent);
 
                             if (intersect.object instanceof THREE.Mesh) {
-                                intersect.object.material.color.set("gray");
+                                intersect.object.material.color.set(0xaaaaaa);
                             }
                         }
                     }
