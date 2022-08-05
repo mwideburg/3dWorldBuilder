@@ -17,7 +17,7 @@ export class DragAndDrop {
 
     scene: THREE.Scene;
 
-    objectIsSelected: boolean = false;
+    objectSelected: THREE.Object3D | null = null;
 
     isShiftDown: boolean = false;
 
@@ -70,13 +70,44 @@ export class DragAndDrop {
 
         const intersects = this.raycaster.intersectObjects(this.plane, false);
 
-        if (intersects.length > 0 && this.pointerIsDown && this.objectIsSelected) {
+        if (
+            intersects.length > 0 &&
+            !this.isShiftDown &&
+            this.pointerIsDown &&
+            this.objectSelected
+        ) {
             const intersect = intersects[0];
 
             if (intersect.face) {
-                this.group.position.copy(intersect.point).add(intersect.face.normal);
-                this.group.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+                const original = new THREE.Vector3().copy(this.objectSelected.position);
+                this.objectSelected.position.copy(intersect.point).add(intersect.face.normal);
+                this.objectSelected.position
+                    .divideScalar(50)
+                    .floor()
+                    .multiplyScalar(50)
+                    .addScalar(25);
+                this.objectSelected.position.y = original.y;
+                const moveX = this.objectSelected.position.x - original.x;
+                const moveZ = this.objectSelected.position.z - original.z;
+                this.group.children.forEach((voxel) => {
+                    if (this.objectSelected && voxel !== this.objectSelected) {
+                        console.log(voxel.position);
+                        voxel.position.x += moveX;
+                        voxel.position.z += moveZ;
+                    }
+                });
             }
+
+            // const moveX = this.objectSelected.position.x - original.x;
+            // const moveZ = this.objectSelected.position.z - original.z;
+            // console.log(this.group);
+            // this.group.children.forEach((voxel) => {
+            //     if (this.objectSelected && voxel !== this.objectSelected) {
+            //         console.log(voxel.position);
+            //         voxel.position.x += moveX;
+            //         voxel.position.z += moveZ;
+            //     }
+            // });
         }
     }
 
@@ -108,9 +139,9 @@ export class DragAndDrop {
                                 intersect.object.material.color.set("red");
                             }
 
-                            this.group.add(intersect.object.parent);
+                            this.group.attach(intersect.object.parent);
                         } else {
-                            // this.group.remove(intersect.object.parent);
+                            this.scene.attach(intersect.object.parent);
 
                             if (intersect.object instanceof THREE.Mesh) {
                                 intersect.object.material.color.set("gray");
@@ -127,14 +158,15 @@ export class DragAndDrop {
                         intersect.object.parent &&
                         this.group.children.includes(intersect.object.parent)
                     ) {
-                        this.objectIsSelected = true;
+                        this.objectSelected = intersect.object.parent;
                     } else {
+                        this.objectSelected = null;
                         // const voxel = intersect.object;
                         // voxel.position.copy(intersect.point).add(intersect.face.normal);
                         // voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
                     }
                 } else {
-                    this.objectIsSelected = false;
+                    this.objectSelected = null;
                 }
             }
         }
