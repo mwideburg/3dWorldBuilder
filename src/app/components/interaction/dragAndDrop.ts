@@ -1,94 +1,158 @@
 import * as THREE from "three";
-import { DragControls } from "three/examples/jsm/controls/DragControls";
+// import { DragControls } from "three/examples/jsm/controls/DragControls";
 export class DragAndDrop {
-    controls: DragControls;
-
-    enableSelection: boolean = false;
-
-    mouse = new THREE.Vector2();
-
     raycaster = new THREE.Raycaster();
+
+    pointer = new THREE.Vector2();
 
     camera: THREE.PerspectiveCamera;
 
+    pointerIsDown: boolean = false;
+
     objects: THREE.Object3D[];
 
-    group: THREE.Group;
+    plane: THREE.Object3D[];
+
+    group: THREE.Group = new THREE.Group();
 
     scene: THREE.Scene;
 
+    objectIsSelected: boolean = false;
+
+    isShiftDown: boolean = false;
+
     constructor(
         objects: THREE.Object3D[],
+        plane: THREE.Object3D[],
         camera: THREE.PerspectiveCamera,
-        renderer: THREE.Renderer,
         scene: THREE.Scene,
     ) {
-        this.objects = objects;
         this.camera = camera;
-        this.group = new THREE.Group();
+        this.objects = objects;
         this.scene = scene;
+        this.plane = plane;
         this.scene.add(this.group);
-        this.controls = new DragControls([...this.objects], camera, renderer.domElement);
-        this.onClick = this.onClick.bind(this);
-        this.onKeyDown = this.onKeyDown.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
-        window.addEventListener("keydown", this.onKeyDown);
-        window.addEventListener("keyup", this.onKeyUp);
-        document.addEventListener("click", this.onClick);
+        this.onPointerMove = this.onPointerMove.bind(this);
+        this.onPointerDown = this.onPointerDown.bind(this);
+        this.onPointerUp = this.onPointerUp.bind(this);
+        this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
+        this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
+        document.addEventListener("pointermove", this.onPointerMove);
+        document.addEventListener("pointerdown", this.onPointerDown);
+        document.addEventListener("pointerup", this.onPointerUp);
+        document.addEventListener("keydown", this.onDocumentKeyDown);
+        document.addEventListener("keyup", this.onDocumentKeyUp);
+        // const rollOverGeo = new THREE.BoxGeometry(50, 50, 50);
+        // const rollOverMaterial = new THREE.MeshBasicMaterial({
+        //     color: 0xff0000,
+        //     opacity: 0.5,
+        //     transparent: true,
+        // });
+        // this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        // this.scene.add(this.rollOverMesh);
     }
 
     public dispose(): void {
-        document.removeEventListener("click", this.onClick);
-        window.removeEventListener("keydown", this.onKeyDown);
-        window.removeEventListener("keyup", this.onKeyUp);
-        this.scene.remove(this.group);
-        this.controls.dispose();
+        console.log("DISPOSING DRAG AND DROP");
+        document.removeEventListener("pointermove", this.onPointerMove);
+        document.removeEventListener("pointerdown", this.onPointerDown);
+        document.removeEventListener("keydown", this.onDocumentKeyDown);
+        document.removeEventListener("keyup", this.onDocumentKeyUp);
     }
 
-    private onClick(event: any): void {
-        event.preventDefault();
+    public onPointerMove(event: any): void {
+        this.pointer.set(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1,
+        );
 
-        if (this.enableSelection === true) {
-            console.log("SELECTION ENABLED");
-            const draggableObjects = this.controls.getObjects();
-            draggableObjects.length = 0;
+        this.raycaster.setFromCamera(this.pointer, this.camera);
 
-            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const intersects = this.raycaster.intersectObjects(this.plane, false);
 
-            this.raycaster.setFromCamera(this.mouse, this.camera);
+        if (intersects.length > 0 && this.pointerIsDown && this.objectIsSelected) {
+            const intersect = intersects[0];
 
-            const intersections = this.raycaster.intersectObjects(this.objects, true);
-
-            if (intersections.length > 0) {
-                const object: any = intersections[0].object;
-                console.log("Object in enabled group", object);
-
-                if (this.group.children.includes(object.parent)) {
-                    object.material.color.set(0xaaaaaa);
-                    this.scene.attach(object.parent.name === "cube" ? object.parent : object);
-                } else {
-                    object.material.color.set(0x000000);
-                    this.group.attach(object.parent.name === "cube" ? object.parent : object);
-                }
-
-                this.controls.transformGroup = true;
-                draggableObjects.push(this.group);
-            }
-
-            if (this.group.children.length === 0) {
-                console.log("hey");
-                this.controls.transformGroup = false;
-                draggableObjects.push(...this.objects);
+            if (intersect.face) {
+                this.group.position.copy(intersect.point).add(intersect.face.normal);
+                this.group.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
             }
         }
     }
 
-    private onKeyDown(event: any): void {
-        this.enableSelection = event.keyCode === 16 ? true : false;
+    public onPointerUp(): void {
+        this.pointerIsDown = false;
     }
 
-    private onKeyUp(): void {
-        this.enableSelection = false;
+    public onPointerDown(event: any): void {
+        this.pointerIsDown = true;
+        this.pointer.set(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1,
+        );
+
+        this.raycaster.setFromCamera(this.pointer, this.camera);
+
+        const intersects = this.raycaster.intersectObjects(this.objects, false);
+
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+
+            // delete cube
+
+            if (this.isShiftDown) {
+                if (intersect.object.name !== "plane") {
+                    if (intersect.object.parent && intersect.object.parent.name === "cube") {
+                        if (!this.group.children.includes(intersect.object.parent)) {
+                            if (intersect.object instanceof THREE.Mesh) {
+                                intersect.object.material.color.set("red");
+                            }
+
+                            this.group.add(intersect.object.parent);
+                        } else {
+                            // this.group.remove(intersect.object.parent);
+
+                            if (intersect.object instanceof THREE.Mesh) {
+                                intersect.object.material.color.set("gray");
+                            }
+                        }
+                    }
+                }
+
+                // create cube
+            } else {
+                if (intersect.face) {
+                    if (
+                        this.group.children.length > 0 &&
+                        intersect.object.parent &&
+                        this.group.children.includes(intersect.object.parent)
+                    ) {
+                        this.objectIsSelected = true;
+                    } else {
+                        // const voxel = intersect.object;
+                        // voxel.position.copy(intersect.point).add(intersect.face.normal);
+                        // voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+                    }
+                } else {
+                    this.objectIsSelected = false;
+                }
+            }
+        }
+    }
+
+    public onDocumentKeyDown(event: any): void {
+        switch (event.keyCode) {
+            case 16:
+                this.isShiftDown = true;
+                break;
+        }
+    }
+
+    public onDocumentKeyUp(event: any): void {
+        switch (event.keyCode) {
+            case 16:
+                this.isShiftDown = false;
+                break;
+        }
     }
 }

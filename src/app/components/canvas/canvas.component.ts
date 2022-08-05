@@ -66,8 +66,8 @@ export class CanvasComponent implements OnInit {
                     currentControls.dispose();
                     currentControls = new DragAndDrop(
                         unitCreator.objects.filter((obj) => obj.name !== "plane"),
+                        unitCreator.objects.filter((obj) => obj.name === "plane"),
                         camera,
-                        renderer,
                         scene,
                     );
                     break;
