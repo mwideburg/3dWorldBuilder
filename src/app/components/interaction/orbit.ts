@@ -5,6 +5,7 @@ export class Orbit {
 
     constructor(camera: THREE.PerspectiveCamera, renderer: THREE.Renderer) {
         this.controls = new OrbitControls(camera, renderer.domElement);
+        this.controls.enableDamping = true;
     }
 
     public dispose(): void {

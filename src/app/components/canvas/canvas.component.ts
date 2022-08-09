@@ -80,6 +80,11 @@ export class CanvasComponent implements OnInit {
 
         const render = (): void => {
             requestAnimationFrame(render);
+
+            if (currentControls instanceof Orbit) {
+                currentControls.controls.update();
+            }
+
             renderer.render(this.scene, camera);
         };
 
