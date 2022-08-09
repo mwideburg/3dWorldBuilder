@@ -42,14 +42,6 @@ export class DragAndDrop {
         document.addEventListener("pointerup", this.onPointerUp);
         document.addEventListener("keydown", this.onDocumentKeyDown);
         document.addEventListener("keyup", this.onDocumentKeyUp);
-        // const rollOverGeo = new THREE.BoxGeometry(50, 50, 50);
-        // const rollOverMaterial = new THREE.MeshBasicMaterial({
-        //     color: 0xff0000,
-        //     opacity: 0.5,
-        //     transparent: true,
-        // });
-        // this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
-        // this.scene.add(this.rollOverMesh);
     }
 
     public dispose(): void {
