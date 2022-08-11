@@ -50,13 +50,14 @@ export class DragAndDrop {
         document.removeEventListener("pointerdown", this.onPointerDown);
         document.removeEventListener("keydown", this.onDocumentKeyDown);
         document.removeEventListener("keyup", this.onDocumentKeyUp);
-        this.group.children.forEach((child) => {
-            child.children.forEach((mesh) => {
-                if (mesh instanceof THREE.Mesh && mesh.name === "cubeMesh") {
-                    mesh.material.color.set(0xaaaaaa);
-                }
-            });
-        });
+        // this.group.children.forEach((child) => {
+        //     child.children.forEach((mesh) => {
+        //         if (mesh instanceof THREE.Mesh && mesh.name === "cubeMesh") {
+        //             mesh.material.color.set(0xaaaaaa);
+        //         }
+        //     });
+        // });
+        // this.group = new THREE.Group();
     }
 
     public disposeTemp(): void {

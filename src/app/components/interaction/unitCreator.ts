@@ -63,6 +63,7 @@ export class UnitCreator {
         document.removeEventListener("pointerdown", this.onPointerDown);
         document.removeEventListener("keydown", this.onDocumentKeyDown);
         document.removeEventListener("keyup", this.onDocumentKeyUp);
+        this.isShiftDown = false;
         this.scene.remove(this.rollOverMesh);
     }
 
