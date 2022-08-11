@@ -24,6 +24,8 @@ export class RenderEngine {
         this.renderer = renderer;
         this.canvas = this.renderer.domElement;
         this.render = this.render.bind(this);
+        this.onWindowResize = this.onWindowResize.bind(this);
+        window.addEventListener("resize", this.onWindowResize);
     }
 
     onInit(): void {}
@@ -54,5 +56,12 @@ export class RenderEngine {
         }
 
         this.renderer.render(this.scene, this.camera);
+    }
+
+    onWindowResize(): void {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.render();
     }
 }

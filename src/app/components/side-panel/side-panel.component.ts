@@ -1,25 +1,23 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ControllerService } from "../controller/controller.service";
+// import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: "app-side-panel",
     templateUrl: "./side-panel.component.html",
     styleUrls: ["./side-panel.component.scss"],
 })
 export class SidePanelComponent implements OnInit {
-    currentController: string = "unitCreator";
-
-    controllerService: ControllerService;
-
-    constructor(@Inject(ControllerService) controllerService: ControllerService) {
-        this.controllerService = controllerService;
+    constructor(private controllerService: ControllerService) {
         this.controllerService.currentController$.subscribe((controller) => {
-            this.currentController = controller;
             console.log(controller);
         });
-        console.log(this.controllerService);
     }
 
     ngOnInit(): void {
         console.log("START");
+    }
+
+    public controlSwitch(type: number): void {
+        this.controllerService.controlSwitch(type);
     }
 }

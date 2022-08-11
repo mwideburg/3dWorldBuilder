@@ -17,6 +17,7 @@ export class ThreeManager {
         );
         this.camera.position.set(500, 800, 1300);
         this.camera.lookAt(0, 0, 0);
+        this.scene.background = new THREE.Color("white");
         this.scene.add(this.camera);
         const gridHelper = new THREE.GridHelper(1000, 20);
         this.scene.add(gridHelper);
