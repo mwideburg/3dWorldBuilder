@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import * as THREE from "three";
 import { UnitCreator } from "../interaction/unitCreator";
 import { Orbit } from "../interaction/orbit";
@@ -8,26 +8,44 @@ import { Subject } from "rxjs";
     providedIn: "root",
 })
 export class ControllerService {
-    scene: THREE.Scene;
+    scene!: THREE.Scene;
 
-    camera: THREE.PerspectiveCamera;
+    camera!: THREE.PerspectiveCamera;
 
-    renderer: THREE.WebGLRenderer;
+    renderer!: THREE.WebGLRenderer;
 
-    plane: THREE.Object3D;
+    plane!: THREE.Object3D;
 
-    currentController: Orbit | UnitCreator | DragAndDrop;
+    currentController!: Orbit | UnitCreator | DragAndDrop;
 
-    unitCreator: UnitCreator;
+    unitCreator!: UnitCreator;
 
     currentController$: Subject<string> = new Subject();
 
-    constructor(
+    // constructor(
+    //     camera: THREE.PerspectiveCamera,
+    //     plane: THREE.Object3D,
+    //     @Inject(THREE.WebGLRenderer) renderer: THREE.WebGLRenderer,
+    //     @Inject(THREE.Scene) scene: THREE.Scene,
+    // ) {
+    //     this.scene = scene;
+    //     this.renderer = renderer;
+    //     this.camera = camera;
+    //     this.plane = plane;
+    //     this.unitCreator = new UnitCreator(this.camera, [plane], this.scene);
+    //     this.currentController = this.unitCreator;
+    //     this.controlSwitch = this.controlSwitch.bind(this);
+    //     this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
+    //     document.addEventListener("keydown", this.hotKeyControlSwitch);
+    //     this.currentController$.next("unitCreator");
+    // }
+
+    public createController(
         camera: THREE.PerspectiveCamera,
         plane: THREE.Object3D,
-        @Inject(THREE.WebGLRenderer) renderer: THREE.WebGLRenderer,
-        @Inject(THREE.Scene) scene: THREE.Scene,
-    ) {
+        renderer: THREE.WebGLRenderer,
+        scene: THREE.Scene,
+    ): void {
         this.scene = scene;
         this.renderer = renderer;
         this.camera = camera;
@@ -35,6 +53,7 @@ export class ControllerService {
         this.unitCreator = new UnitCreator(this.camera, [plane], this.scene);
         this.currentController = this.unitCreator;
         this.controlSwitch = this.controlSwitch.bind(this);
+        this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
         document.addEventListener("keydown", this.hotKeyControlSwitch);
         this.currentController$.next("unitCreator");
     }
