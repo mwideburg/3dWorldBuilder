@@ -7,9 +7,11 @@ import { ControllerService } from "../controller/controller.service";
     styleUrls: ["./side-panel.component.scss"],
 })
 export class SidePanelComponent implements OnInit {
+    currentCotroller: string = "unitCreator";
+
     constructor(private controllerService: ControllerService) {
         this.controllerService.currentController$.subscribe((controller) => {
-            console.log(controller);
+            this.currentCotroller = controller;
         });
     }
 

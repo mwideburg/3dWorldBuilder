@@ -59,6 +59,24 @@ export class DragAndDrop {
         });
     }
 
+    public disposeTemp(): void {
+        console.log("DISPOSING DRAG AND DROP");
+        document.removeEventListener("pointermove", this.onPointerMove);
+        document.removeEventListener("pointerdown", this.onPointerDown);
+        document.removeEventListener("keydown", this.onDocumentKeyDown);
+        document.removeEventListener("keyup", this.onDocumentKeyUp);
+    }
+
+    public activate(objects: THREE.Object3D[], plane: THREE.Object3D[]): void {
+        this.objects = objects;
+        this.plane = plane;
+        document.addEventListener("pointermove", this.onPointerMove);
+        document.addEventListener("pointerdown", this.onPointerDown);
+        document.addEventListener("pointerup", this.onPointerUp);
+        document.addEventListener("keydown", this.onDocumentKeyDown);
+        document.addEventListener("keyup", this.onDocumentKeyUp);
+    }
+
     public onPointerMove(event: any): void {
         this.pointer.set(
             (event.clientX / window.innerWidth) * 2 - 1,

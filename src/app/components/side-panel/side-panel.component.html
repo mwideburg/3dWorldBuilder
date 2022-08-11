@@ -1,6 +1,9 @@
-<div style="position: absolute; width: 300px; height: 300px; border: 1px black solid; z-index: 1;">
-    <button mat-button (click)="controlSwitch(1)">Orbit Controls</button>
-    <button mat-button (click)="controlSwitch(2)">Unit Creator</button>
-    <button mat-button (click)="controlSwitch(3)">Selector</button>
+<div style="position: absolute;">
+    <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+        <mat-button-toggle [class]="currentCotroller === 'orbit' ? 'selected' : 'not-selected'" (click)="controlSwitch(1)">Orbit Controls</mat-button-toggle>
+        <mat-button-toggle [class]="currentCotroller === 'unitCreator' ? 'selected' : 'not-selected'" (click)="controlSwitch(2)">Unit Creator</mat-button-toggle>
+        <mat-button-toggle [class]="currentCotroller === 'dragAndDrop' ? 'selected' : 'not-selected'"(click)="controlSwitch(3)">Select</mat-button-toggle>
+    </mat-button-toggle-group>
 
 </div>
+

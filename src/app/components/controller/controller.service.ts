@@ -20,6 +20,8 @@ export class ControllerService {
 
     unitCreator!: UnitCreator;
 
+    dragAndDrop!: DragAndDrop;
+
     currentController$: Subject<string> = new Subject();
 
     // constructor(
@@ -56,12 +58,23 @@ export class ControllerService {
         this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
         document.addEventListener("keydown", this.hotKeyControlSwitch);
         this.currentController$.next("unitCreator");
+        this.dragAndDrop = new DragAndDrop(
+            this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+            this.unitCreator.objects.filter((obj) => obj.name === "plane"),
+            this.camera,
+            this.scene,
+        );
     }
 
     private hotKeyControlSwitch(event: any): void {
         switch (event.keyCode) {
             case 49:
-                this.currentController.dispose();
+                if (this.currentController instanceof DragAndDrop) {
+                    this.currentController.disposeTemp();
+                } else {
+                    this.currentController.dispose();
+                }
+
                 this.currentController = new Orbit(this.camera, this.renderer);
                 this.currentController$.next("orbit");
                 break;
@@ -73,11 +86,11 @@ export class ControllerService {
                 break;
             case 51:
                 this.currentController.dispose();
-                this.currentController = new DragAndDrop(
+
+                this.currentController = this.dragAndDrop;
+                this.dragAndDrop.activate(
                     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
                     this.unitCreator.objects.filter((obj) => obj.name === "plane"),
-                    this.camera,
-                    this.scene,
                 );
                 this.currentController$.next("dragAndDrop");
                 break;
@@ -89,7 +102,12 @@ export class ControllerService {
     public controlSwitch(type: number): void {
         switch (type) {
             case 1:
-                this.currentController.dispose();
+                if (this.currentController instanceof DragAndDrop) {
+                    this.currentController.disposeTemp();
+                } else {
+                    this.currentController.dispose();
+                }
+
                 this.currentController = new Orbit(this.camera, this.renderer);
                 this.currentController$.next("orbit");
                 break;
@@ -101,11 +119,11 @@ export class ControllerService {
                 break;
             case 3:
                 this.currentController.dispose();
-                this.currentController = new DragAndDrop(
+
+                this.currentController = this.dragAndDrop;
+                this.dragAndDrop.activate(
                     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
                     this.unitCreator.objects.filter((obj) => obj.name === "plane"),
-                    this.camera,
-                    this.scene,
                 );
                 this.currentController$.next("dragAndDrop");
                 break;
