@@ -7,6 +7,7 @@ import { CanvasComponent } from "./components/canvas/canvas.component";
 import { SidePanelComponent } from "./components/side-panel/side-panel.component";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+
 // import { InteractionComponent } from "./components/interaction/interaction.component";
 
 @NgModule({

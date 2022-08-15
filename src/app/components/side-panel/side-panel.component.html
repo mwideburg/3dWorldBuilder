@@ -1,9 +1,17 @@
-<div style="position: absolute;">
-    <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-        <mat-button-toggle [class]="currentCotroller === 'orbit' ? 'selected' : 'not-selected'" (click)="controlSwitch(1)">Orbit Controls</mat-button-toggle>
-        <mat-button-toggle [class]="currentCotroller === 'unitCreator' ? 'selected' : 'not-selected'" (click)="controlSwitch(2)">Unit Creator</mat-button-toggle>
-        <mat-button-toggle [class]="currentCotroller === 'dragAndDrop' ? 'selected' : 'not-selected'"(click)="controlSwitch(3)">Select</mat-button-toggle>
-    </mat-button-toggle-group>
+<div style="position: absolute; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: row;">
+        
+        <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+            <mat-button-toggle [class]="currentCotroller === 'orbit' ? 'selected' : 'not-selected'" (click)="controlSwitch(1)">Orbit Controls</mat-button-toggle>
+            <mat-button-toggle [class]="currentCotroller === 'unitCreator' ? 'selected' : 'not-selected'" (click)="controlSwitch(2)">Unit Creator</mat-button-toggle>
+            <mat-button-toggle [class]="currentCotroller === 'dragAndDrop' ? 'selected' : 'not-selected'"(click)="controlSwitch(3)">Select</mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+    <div>
+        <form class="example-form">
+            <input type="number" (change)="setWidth($event)">
+        </form>
+    </div>
 
 </div>
 

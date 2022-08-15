@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { FormControl } from "@angular/forms";
 import { Subject } from "rxjs";
 import { ControllerService } from "../controller/controller.service";
 // import { MatButtonModule } from "@angular/material/button";
@@ -9,6 +10,8 @@ import { ControllerService } from "../controller/controller.service";
 })
 export class SidePanelComponent implements OnInit {
     currentCotroller: string = "unitCreator";
+
+    widthFormControl = new FormControl("");
 
     width$: Subject<number> = new Subject();
 
@@ -28,5 +31,9 @@ export class SidePanelComponent implements OnInit {
 
     public controlSwitch(type: number): void {
         this.controllerService.controlSwitch(type);
+    }
+
+    public setWidth(event: Event): void {
+        console.log(event);
     }
 }

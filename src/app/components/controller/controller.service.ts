@@ -51,6 +51,10 @@ export class ControllerService {
     private hotKeyControlSwitch(event: any): void {
         switch (event.keyCode) {
             case 49:
+                if (this.currentController instanceof Orbit) {
+                    return;
+                }
+
                 if (this.currentController instanceof DragAndDrop) {
                     this.currentController.disposeTemp();
                 } else {
