@@ -25,9 +25,9 @@ export class UnitCreator {
 
     constructor(camera: THREE.PerspectiveCamera, objects: THREE.Object3D[], scene: THREE.Scene) {
         this.dimensions = {
-            width: 50,
+            width: 100,
             height: 100,
-            depth: 50,
+            depth: 150,
         };
         this.camera = camera;
         this.objects = objects;
@@ -98,15 +98,11 @@ export class UnitCreator {
 
             if (intersect.face) {
                 const vect3 = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
-                vect3
-                    .divideScalar(this.dimensions.width)
-                    .floor()
-                    .multiplyScalar(this.dimensions.width)
-                    .addScalar(this.dimensions.width / 2);
+                vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
                 this.rollOverMesh.position.set(
-                    vect3.x,
+                    vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                     intersect.point.y + intersect.face.normal.y + this.dimensions.height / 2,
-                    vect3.z,
+                    vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
                 );
             }
         }
@@ -145,15 +141,11 @@ export class UnitCreator {
                     const vect3 = new THREE.Vector3()
                         .copy(intersect.point)
                         .add(intersect.face.normal);
-                    vect3
-                        .divideScalar(this.dimensions.width)
-                        .floor()
-                        .multiplyScalar(this.dimensions.width)
-                        .addScalar(this.dimensions.width / 2);
+                    vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
                     voxel.group.position.set(
-                        vect3.x,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                         intersect.point.y + intersect.face.normal.y + this.dimensions.height / 2,
-                        vect3.z,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
                     );
 
                     this.scene.add(voxel.group);
