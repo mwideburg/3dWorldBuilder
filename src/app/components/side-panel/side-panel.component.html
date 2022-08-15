@@ -47,7 +47,7 @@
             <button mat-raised-button type="submit" color="accent">Change Dimensions</button>
         </form>
     </div>
-    <div *ngIf="currentCotroller === 'orbit'" style="border: 1px lightgray solid; display: flex; justify-content: center; padding: 25px; background-color: rgba(211, 211, 211, 0.452);">
+    <div *ngIf="currentCotroller === 'orbit' && unitIsSelected" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(211, 211, 211, 0.452);">
         <form (ngSubmit)="onUnitSubmit($event)" style="display: flex; flex-direction: column;">
 
             <mat-form-field class="form-group" [formGroup]="unitAttributes" autocomplete="off">
@@ -55,16 +55,16 @@
                     <mat-label for="name">
                     Unit Name
                     </mat-label>
-                    <input matInput id="name" type="text" formControlName="name" [placeholder]="unitAttributes.value.name">
+                    <input autocomplete="off" matInput id="name" type="text" formControlName="name" [placeholder]="unitName">
                 </div>
             </mat-form-field>
             
             <button mat-raised-button type="submit" color="accent">Change Name</button>
         </form>
-    </div>
-    <div *ngIf="currentCotroller === 'orbit' && unitIsSelected">
-        
-        <p>Unit Name: {{unitName}}</p>
+        <div>
+            
+            <p>Unit Name: {{unitName}}</p>
+        </div>
     </div>
 
 </div>

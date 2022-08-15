@@ -23,11 +23,15 @@ export class SidePanelComponent implements OnInit {
 
     unitName: string = "";
 
-    unitIsSelected: boolean = true;
+    unitIsSelected: boolean = false;
 
     constructor(public controllerService: ControllerService, private formBuilder: FormBuilder) {
         this.controllerService.currentController$.subscribe((controller) => {
             this.currentCotroller = controller;
+
+            if (controller !== "orbit") {
+                this.unitIsSelected = false;
+            }
         });
         this.controllerService.selectedUnitData$.subscribe(
             (data: { name: string; attributes: string[] }) => {
