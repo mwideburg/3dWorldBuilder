@@ -4,6 +4,7 @@ import { UnitCreator } from "../interaction/unitCreator";
 import { Orbit } from "../interaction/orbit";
 import { DragAndDrop } from "../interaction/dragAndDrop";
 import { Subject } from "rxjs";
+import { Dimension } from "../types/dimensionType";
 @Injectable({
     providedIn: "root",
 })
@@ -38,7 +39,7 @@ export class ControllerService {
         this.currentController = this.unitCreator;
         this.controlSwitch = this.controlSwitch.bind(this);
         this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
-        document.addEventListener("keydown", this.hotKeyControlSwitch);
+        // document.addEventListener("keydown", this.hotKeyControlSwitch);
         this.currentController$.next("unitCreator");
         this.dragAndDrop = new DragAndDrop(
             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
@@ -46,6 +47,11 @@ export class ControllerService {
             this.camera,
             this.scene,
         );
+    }
+
+    public setDimensions(dimensions: Dimension): void {
+        // console.log(dimensions);
+        this.unitCreator.setDimensions(dimensions);
     }
 
     private hotKeyControlSwitch(event: any): void {

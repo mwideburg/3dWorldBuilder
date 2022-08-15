@@ -25,9 +25,9 @@ export class UnitCreator {
 
     constructor(camera: THREE.PerspectiveCamera, objects: THREE.Object3D[], scene: THREE.Scene) {
         this.dimensions = {
-            width: 100,
+            width: 50,
             height: 100,
-            depth: 150,
+            depth: 50,
         };
         this.camera = camera;
         this.objects = objects;
@@ -36,6 +36,7 @@ export class UnitCreator {
         this.onPointerDown = this.onPointerDown.bind(this);
         this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
         this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
+        this.setDimensions = this.setDimensions.bind(this);
         document.addEventListener("pointermove", this.onPointerMove);
         document.addEventListener("pointerdown", this.onPointerDown);
         document.addEventListener("keydown", this.onDocumentKeyDown);
@@ -81,6 +82,24 @@ export class UnitCreator {
         document.removeEventListener("keyup", this.onDocumentKeyUp);
         this.isShiftDown = false;
         this.scene.remove(this.rollOverMesh);
+    }
+
+    public setDimensions(dimensions: Dimension): void {
+        this.scene.remove(this.rollOverMesh);
+        console.log(dimensions);
+        this.dimensions = dimensions;
+        const rollOverGeo = new THREE.BoxGeometry(
+            this.dimensions.width,
+            this.dimensions.height,
+            this.dimensions.depth,
+        );
+        const rollOverMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            opacity: 0.5,
+            transparent: true,
+        });
+        this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        this.scene.add(this.rollOverMesh);
     }
 
     private onPointerMove(event: any): void {

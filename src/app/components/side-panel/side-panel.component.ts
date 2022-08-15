@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { Subject } from "rxjs";
+
 import { ControllerService } from "../controller/controller.service";
+import { FormBuilder } from "@angular/forms";
 // import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: "app-side-panel",
@@ -11,15 +11,13 @@ import { ControllerService } from "../controller/controller.service";
 export class SidePanelComponent implements OnInit {
     currentCotroller: string = "unitCreator";
 
-    widthFormControl = new FormControl("");
+    dimensions = this.formBuilder.group({
+        width: "5",
+        depth: "5",
+        height: "10",
+    });
 
-    width$: Subject<number> = new Subject();
-
-    depth$: Subject<number> = new Subject();
-
-    height$: Subject<number> = new Subject();
-
-    constructor(private controllerService: ControllerService) {
+    constructor(private controllerService: ControllerService, private formBuilder: FormBuilder) {
         this.controllerService.currentController$.subscribe((controller) => {
             this.currentCotroller = controller;
         });
@@ -35,5 +33,18 @@ export class SidePanelComponent implements OnInit {
 
     public setWidth(event: Event): void {
         console.log(event);
+    }
+
+    public onSubmit(e: Event): void {
+        e.preventDefault();
+        // Process checkout data here
+        const dimensions = {
+            width: Number(this.dimensions.value.width) * 10,
+            depth: Number(this.dimensions.value.depth) * 10,
+            height: Number(this.dimensions.value.height) * 10,
+        };
+        console.log("Dimensions changing", dimensions);
+        this.controllerService.setDimensions(dimensions);
+        // this.dimensions.reset();
     }
 }

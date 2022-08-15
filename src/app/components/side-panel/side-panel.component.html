@@ -7,9 +7,44 @@
             <mat-button-toggle [class]="currentCotroller === 'dragAndDrop' ? 'selected' : 'not-selected'"(click)="controlSwitch(3)">Select</mat-button-toggle>
         </mat-button-toggle-group>
     </div>
-    <div>
-        <form class="example-form">
-            <input type="number" (change)="setWidth($event)">
+    <div style="border: 1px lightgray solid; display: flex; justify-content: center; padding: 25px; background-color: rgba(211, 211, 211, 0.452);">
+        <form (ngSubmit)="onSubmit($event)" style="display: flex; flex-direction: column;">
+
+            <mat-form-field class="form-group" [formGroup]="dimensions" autocomplete="off">
+                <div class="form-group">
+                    <mat-label for="width">
+                    Width
+                    </mat-label>
+                    <input matInput id="width" type="text" formControlName="width">
+                </div>
+            </mat-form-field>
+            <mat-form-field class="form-group" [formGroup]="dimensions">
+    
+            
+                <div>
+                    <mat-label for="depth">
+                    Depth
+                    </mat-label >
+                    <input matInput id="depth" type="text" formControlName="depth">
+                </div>
+    
+                
+    
+            </mat-form-field>
+            <mat-form-field class="form-group" [formGroup]="dimensions">
+    
+            
+                <div>
+                    <mat-label for="height">
+                    Height
+                    </mat-label >
+                    <input matInput id="height" type="text" formControlName="height">
+                </div>
+    
+                
+    
+            </mat-form-field>
+            <button mat-raised-button type="submit" color="accent">Change Dimensions</button>
         </form>
     </div>
 
