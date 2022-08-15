@@ -17,10 +17,32 @@ export class SidePanelComponent implements OnInit {
         height: "10",
     });
 
-    constructor(private controllerService: ControllerService, private formBuilder: FormBuilder) {
+    unitAttributes = this.formBuilder.group({
+        name: "",
+    });
+
+    unitName: string = "";
+
+    unitIsSelected: boolean = true;
+
+    constructor(public controllerService: ControllerService, private formBuilder: FormBuilder) {
         this.controllerService.currentController$.subscribe((controller) => {
             this.currentCotroller = controller;
         });
+        this.controllerService.selectedUnitData$.subscribe(
+            (data: { name: string; attributes: string[] }) => {
+                // this.unitIsSelected = false;
+                this.unitIsSelected = true;
+
+                if (data.name) {
+                    this.unitAttributes.value.name = data.name;
+                    this.unitName = data.name;
+                } else {
+                    this.unitName = "";
+                    this.unitIsSelected = false;
+                }
+            },
+        );
     }
 
     ngOnInit(): void {
@@ -46,5 +68,15 @@ export class SidePanelComponent implements OnInit {
         console.log("Dimensions changing", dimensions);
         this.controllerService.setDimensions(dimensions);
         // this.dimensions.reset();
+    }
+
+    public onUnitSubmit(e: Event): void {
+        e.preventDefault();
+        // Process checkout data here
+        this.unitIsSelected = false;
+        console.log("Naming unit", this.unitAttributes);
+        this.controllerService.setName(this.unitAttributes.value.name);
+        this.unitName = this.unitAttributes.value.name;
+        this.unitAttributes.reset();
     }
 }

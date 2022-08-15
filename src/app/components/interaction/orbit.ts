@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 export class Orbit {
@@ -12,6 +13,8 @@ export class Orbit {
     camera: THREE.PerspectiveCamera;
 
     selectedObject: THREE.Object3D | undefined;
+
+    selectedObject$: Subject<THREE.Object3D> = new Subject();
 
     constructor(
         camera: THREE.PerspectiveCamera,
@@ -55,7 +58,15 @@ export class Orbit {
 
                 intersect.object.material.color.set("black");
                 this.selectedObject = intersect.object;
+                this.selectedObject$.next(intersect.object);
             }
+        }
+    }
+
+    public setName(name: string): void {
+        if (this.selectedObject) {
+            this.selectedObject.name = name;
+            this.selectedObject$.next(this.selectedObject);
         }
     }
 }

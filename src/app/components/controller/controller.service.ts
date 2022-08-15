@@ -25,6 +25,8 @@ export class ControllerService {
 
     currentController$: Subject<string> = new Subject();
 
+    selectedUnitData$: Subject<{ name: string; attributes: string[] }> = new Subject();
+
     public createController(
         camera: THREE.PerspectiveCamera,
         plane: THREE.Object3D,
@@ -39,7 +41,7 @@ export class ControllerService {
         this.currentController = this.unitCreator;
         this.controlSwitch = this.controlSwitch.bind(this);
         this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
-        // document.addEventListener("keydown", this.hotKeyControlSwitch);
+        document.addEventListener("keydown", this.hotKeyControlSwitch);
         this.currentController$.next("unitCreator");
         this.dragAndDrop = new DragAndDrop(
             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
@@ -54,9 +56,17 @@ export class ControllerService {
         this.unitCreator.setDimensions(dimensions);
     }
 
+    public setName(name: string): void {
+        if (this.currentController instanceof Orbit && this.currentController.selectedObject) {
+            this.currentController.setName(name);
+        }
+    }
+
     private hotKeyControlSwitch(event: any): void {
+        console.log(event.keyCode);
+
         switch (event.keyCode) {
-            case 49:
+            case 79:
                 if (this.currentController instanceof Orbit) {
                     return;
                 }
@@ -72,15 +82,21 @@ export class ControllerService {
                     this.renderer,
                     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
                 );
+                this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
+                    if (data.name) {
+                        console.log("CONTROLLER", data.name);
+                        this.selectedUnitData$.next({ name: data.name, attributes: [] });
+                    }
+                });
                 this.currentController$.next("orbit");
                 break;
-            case 50:
+            case 85:
                 this.currentController.dispose();
                 this.currentController = this.unitCreator;
                 this.unitCreator.activate();
                 this.currentController$.next("unitCreator");
                 break;
-            case 51:
+            case 83:
                 this.currentController.dispose();
 
                 this.currentController = this.dragAndDrop;
@@ -109,6 +125,12 @@ export class ControllerService {
                     this.renderer,
                     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
                 );
+                this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
+                    if (data.name) {
+                        console.log("CONTROLLER", data.name);
+                        this.selectedUnitData$.next({ name: data.name, attributes: [] });
+                    }
+                });
                 this.currentController$.next("orbit");
                 break;
             case 2:
