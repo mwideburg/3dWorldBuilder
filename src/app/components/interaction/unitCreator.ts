@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import * as THREE from "three";
 import { Cube } from "../units/cube";
+import { Dimension } from "../types/dimensionType";
 export class UnitCreator {
     raycaster = new THREE.Raycaster();
 
@@ -20,7 +21,14 @@ export class UnitCreator {
 
     isShiftDown: boolean = false;
 
+    dimensions: Dimension;
+
     constructor(camera: THREE.PerspectiveCamera, objects: THREE.Object3D[], scene: THREE.Scene) {
+        this.dimensions = {
+            width: 50,
+            height: 100,
+            depth: 50,
+        };
         this.camera = camera;
         this.objects = objects;
         this.scene = scene;
@@ -32,7 +40,11 @@ export class UnitCreator {
         document.addEventListener("pointerdown", this.onPointerDown);
         document.addEventListener("keydown", this.onDocumentKeyDown);
         document.addEventListener("keyup", this.onDocumentKeyUp);
-        const rollOverGeo = new THREE.BoxGeometry(50, 50, 50);
+        const rollOverGeo = new THREE.BoxGeometry(
+            this.dimensions.width,
+            this.dimensions.height,
+            this.dimensions.depth,
+        );
         const rollOverMaterial = new THREE.MeshBasicMaterial({
             color: 0xff0000,
             opacity: 0.5,
@@ -47,7 +59,11 @@ export class UnitCreator {
         document.addEventListener("pointerdown", this.onPointerDown);
         document.addEventListener("keydown", this.onDocumentKeyDown);
         document.addEventListener("keyup", this.onDocumentKeyUp);
-        const rollOverGeo = new THREE.BoxGeometry(50, 50, 50);
+        const rollOverGeo = new THREE.BoxGeometry(
+            this.dimensions.width,
+            this.dimensions.height,
+            this.dimensions.depth,
+        );
         const rollOverMaterial = new THREE.MeshBasicMaterial({
             color: 0xff0000,
             opacity: 0.5,
@@ -81,12 +97,17 @@ export class UnitCreator {
             const intersect = intersects[0];
 
             if (intersect.face) {
-                this.rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
-                this.rollOverMesh.position
-                    .divideScalar(50)
+                const vect3 = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
+                vect3
+                    .divideScalar(this.dimensions.width)
                     .floor()
-                    .multiplyScalar(50)
-                    .addScalar(25);
+                    .multiplyScalar(this.dimensions.width)
+                    .addScalar(this.dimensions.width / 2);
+                this.rollOverMesh.position.set(
+                    vect3.x,
+                    intersect.point.y + intersect.face.normal.y + this.dimensions.height / 2,
+                    vect3.z,
+                );
             }
         }
     }
@@ -118,11 +139,23 @@ export class UnitCreator {
 
                 // create cube
             } else {
-                const voxel = new Cube();
+                const voxel = new Cube(this.dimensions);
 
                 if (intersect.face) {
-                    voxel.group.position.copy(intersect.point).add(intersect.face.normal);
-                    voxel.group.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+                    const vect3 = new THREE.Vector3()
+                        .copy(intersect.point)
+                        .add(intersect.face.normal);
+                    vect3
+                        .divideScalar(this.dimensions.width)
+                        .floor()
+                        .multiplyScalar(this.dimensions.width)
+                        .addScalar(this.dimensions.width / 2);
+                    voxel.group.position.set(
+                        vect3.x,
+                        intersect.point.y + intersect.face.normal.y + this.dimensions.height / 2,
+                        vect3.z,
+                    );
+
                     this.scene.add(voxel.group);
                 }
 

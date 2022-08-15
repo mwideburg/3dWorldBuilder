@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Dimension } from "../types/dimensionType";
 export class Cube {
     mesh: THREE.Mesh;
 
@@ -6,8 +7,10 @@ export class Cube {
 
     edges: THREE.LineSegments;
 
-    constructor() {
-        const cubeGeo = new THREE.BoxGeometry(50, 50, 50);
+    constructor(dimensions?: Dimension) {
+        const cubeGeo = dimensions
+            ? new THREE.BoxGeometry(dimensions.width, dimensions.height, dimensions.depth)
+            : new THREE.BoxGeometry(50, 100, 50);
         const cubeMaterial = new THREE.MeshBasicMaterial({
             color: 0xaaaaaa,
         });
