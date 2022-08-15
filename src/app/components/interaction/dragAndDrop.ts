@@ -48,6 +48,7 @@ export class DragAndDrop {
         console.log("DISPOSING DRAG AND DROP");
         document.removeEventListener("pointermove", this.onPointerMove);
         document.removeEventListener("pointerdown", this.onPointerDown);
+        document.removeEventListener("pointerup", this.onPointerUp);
         document.removeEventListener("keydown", this.onDocumentKeyDown);
         document.removeEventListener("keyup", this.onDocumentKeyUp);
         // this.group.children.forEach((child) => {
@@ -64,6 +65,7 @@ export class DragAndDrop {
         console.log("DISPOSING DRAG AND DROP");
         document.removeEventListener("pointermove", this.onPointerMove);
         document.removeEventListener("pointerdown", this.onPointerDown);
+        document.removeEventListener("pointerup", this.onPointerUp);
         document.removeEventListener("keydown", this.onDocumentKeyDown);
         document.removeEventListener("keyup", this.onDocumentKeyUp);
     }

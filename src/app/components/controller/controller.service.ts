@@ -24,24 +24,6 @@ export class ControllerService {
 
     currentController$: Subject<string> = new Subject();
 
-    // constructor(
-    //     camera: THREE.PerspectiveCamera,
-    //     plane: THREE.Object3D,
-    //     @Inject(THREE.WebGLRenderer) renderer: THREE.WebGLRenderer,
-    //     @Inject(THREE.Scene) scene: THREE.Scene,
-    // ) {
-    //     this.scene = scene;
-    //     this.renderer = renderer;
-    //     this.camera = camera;
-    //     this.plane = plane;
-    //     this.unitCreator = new UnitCreator(this.camera, [plane], this.scene);
-    //     this.currentController = this.unitCreator;
-    //     this.controlSwitch = this.controlSwitch.bind(this);
-    //     this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
-    //     document.addEventListener("keydown", this.hotKeyControlSwitch);
-    //     this.currentController$.next("unitCreator");
-    // }
-
     public createController(
         camera: THREE.PerspectiveCamera,
         plane: THREE.Object3D,
@@ -75,7 +57,11 @@ export class ControllerService {
                     this.currentController.dispose();
                 }
 
-                this.currentController = new Orbit(this.camera, this.renderer);
+                this.currentController = new Orbit(
+                    this.camera,
+                    this.renderer,
+                    this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+                );
                 this.currentController$.next("orbit");
                 break;
             case 50:
@@ -108,7 +94,11 @@ export class ControllerService {
                     this.currentController.dispose();
                 }
 
-                this.currentController = new Orbit(this.camera, this.renderer);
+                this.currentController = new Orbit(
+                    this.camera,
+                    this.renderer,
+                    this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+                );
                 this.currentController$.next("orbit");
                 break;
             case 2:

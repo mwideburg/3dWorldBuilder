@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Subject } from "rxjs";
 import { ControllerService } from "../controller/controller.service";
 // import { MatButtonModule } from "@angular/material/button";
 @Component({
@@ -8,6 +9,12 @@ import { ControllerService } from "../controller/controller.service";
 })
 export class SidePanelComponent implements OnInit {
     currentCotroller: string = "unitCreator";
+
+    width$: Subject<number> = new Subject();
+
+    depth$: Subject<number> = new Subject();
+
+    height$: Subject<number> = new Subject();
 
     constructor(private controllerService: ControllerService) {
         this.controllerService.currentController$.subscribe((controller) => {
