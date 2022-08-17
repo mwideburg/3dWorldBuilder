@@ -107,6 +107,8 @@ export class DragAndDrop {
                     .multiplyScalar(50)
                     .addScalar(25);
                 this.objectSelected.position.y = original.y;
+
+                console.log(this.objectSelected);
                 const moveX = this.objectSelected.position.x - original.x;
                 const moveZ = this.objectSelected.position.z - original.z;
                 this.group.children.forEach((voxel) => {
@@ -117,17 +119,6 @@ export class DragAndDrop {
                     }
                 });
             }
-
-            // const moveX = this.objectSelected.position.x - original.x;
-            // const moveZ = this.objectSelected.position.z - original.z;
-            // console.log(this.group);
-            // this.group.children.forEach((voxel) => {
-            //     if (this.objectSelected && voxel !== this.objectSelected) {
-            //         console.log(voxel.position);
-            //         voxel.position.x += moveX;
-            //         voxel.position.z += moveZ;
-            //     }
-            // });
         }
     }
 

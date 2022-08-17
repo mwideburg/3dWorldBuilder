@@ -25,7 +25,8 @@ export class ControllerService {
 
     currentController$: Subject<string> = new Subject();
 
-    selectedUnitData$: Subject<{ name: string; attributes: string[] }> = new Subject();
+    selectedUnitData$: Subject<{ name: string; attributes: string[]; unit: THREE.Object3D }> =
+        new Subject();
 
     public createController(
         camera: THREE.PerspectiveCamera,
@@ -62,6 +63,12 @@ export class ControllerService {
         }
     }
 
+    public changeLevel(level: number): void {
+        if (this.currentController instanceof Orbit && this.currentController.selectedObject) {
+            this.currentController.changeLevel(level);
+        }
+    }
+
     private hotKeyControlSwitch(event: any): void {
         console.log(event.keyCode);
 
@@ -85,7 +92,11 @@ export class ControllerService {
                 this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
                     if (data.name) {
                         console.log("CONTROLLER", data.name);
-                        this.selectedUnitData$.next({ name: data.name, attributes: [] });
+                        this.selectedUnitData$.next({
+                            name: data.name,
+                            attributes: [],
+                            unit: data,
+                        });
                     }
                 });
                 this.currentController$.next("orbit");
@@ -128,7 +139,11 @@ export class ControllerService {
                 this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
                     if (data.name) {
                         console.log("CONTROLLER", data.name);
-                        this.selectedUnitData$.next({ name: data.name, attributes: [] });
+                        this.selectedUnitData$.next({
+                            name: data.name,
+                            attributes: [],
+                            unit: data,
+                        });
                     }
                 });
                 this.currentController$.next("orbit");

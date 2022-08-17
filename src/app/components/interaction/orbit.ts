@@ -26,6 +26,7 @@ export class Orbit {
         this.objects = objects;
         this.camera = camera;
         this.click = this.click.bind(this);
+
         document.addEventListener("pointerdown", this.click);
     }
 
@@ -59,6 +60,7 @@ export class Orbit {
                 intersect.object.material.color.set("black");
                 this.selectedObject = intersect.object;
                 this.selectedObject$.next(intersect.object);
+                console.log(this.selectedObject.parent);
             }
         }
     }
@@ -66,6 +68,23 @@ export class Orbit {
     public setName(name: string): void {
         if (this.selectedObject) {
             this.selectedObject.name = name;
+            this.selectedObject$.next(this.selectedObject);
+        }
+    }
+
+    public changeLevel(level: number): void {
+        if (this.selectedObject && this.selectedObject.parent) {
+            console.log(this.selectedObject);
+
+            // this.selectedObject;
+            if (this.selectedObject instanceof THREE.Mesh) {
+                console.log(this.selectedObject.geometry.parameters.height);
+                console.log(this.selectedObject.parent.position.y);
+                this.selectedObject.parent.position.y += Math.floor(
+                    level * this.selectedObject.geometry.parameters.height,
+                );
+            }
+
             this.selectedObject$.next(this.selectedObject);
         }
     }

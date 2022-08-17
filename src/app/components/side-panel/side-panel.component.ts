@@ -12,8 +12,8 @@ export class SidePanelComponent implements OnInit {
     currentCotroller: string = "unitCreator";
 
     dimensions = this.formBuilder.group({
-        width: "5",
-        depth: "5",
+        width: "10",
+        depth: "10",
         height: "10",
     });
 
@@ -25,6 +25,8 @@ export class SidePanelComponent implements OnInit {
 
     unitIsSelected: boolean = false;
 
+    unitLevel: number = 1;
+
     constructor(public controllerService: ControllerService, private formBuilder: FormBuilder) {
         this.controllerService.currentController$.subscribe((controller) => {
             this.currentCotroller = controller;
@@ -34,7 +36,7 @@ export class SidePanelComponent implements OnInit {
             }
         });
         this.controllerService.selectedUnitData$.subscribe(
-            (data: { name: string; attributes: string[] }) => {
+            (data: { name: string; attributes: string[]; unit: THREE.Object3D }) => {
                 // this.unitIsSelected = false;
                 this.unitIsSelected = true;
 
@@ -44,6 +46,10 @@ export class SidePanelComponent implements OnInit {
                 } else {
                     this.unitName = "";
                     this.unitIsSelected = false;
+                }
+
+                if (data.unit.parent) {
+                    this.unitLevel = Math.floor(data.unit.parent.position.y / 100) + 1;
                 }
             },
         );
@@ -82,5 +88,12 @@ export class SidePanelComponent implements OnInit {
         this.controllerService.setName(this.unitAttributes.value.name);
         this.unitName = this.unitAttributes.value.name;
         this.unitAttributes.reset();
+    }
+
+    public changeLevel(level: number): void {
+        this.unitIsSelected = false;
+        console.log("Change Level of unit", this.unitAttributes);
+
+        this.controllerService.changeLevel(Number(level));
     }
 }

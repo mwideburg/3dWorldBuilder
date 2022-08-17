@@ -20,7 +20,12 @@ export class RenderEngine {
     constructor(private ngZone: NgZone) {
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        const renderDiv = document.getElementById("renderDiv");
+
+        if (renderDiv) {
+            renderDiv.appendChild(renderer.domElement);
+        }
+
         this.renderer = renderer;
         this.canvas = this.renderer.domElement;
         this.render = this.render.bind(this);

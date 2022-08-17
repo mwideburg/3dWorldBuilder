@@ -13,15 +13,16 @@ export class ThreeManager {
             45,
             window.innerWidth / window.innerHeight,
             1,
-            10000,
+            60000,
         );
         this.camera.position.set(500, 800, 1300);
         this.camera.lookAt(0, 0, 0);
         this.scene.background = new THREE.Color("white");
         this.scene.add(this.camera);
-        const gridHelper = new THREE.GridHelper(1000, 20);
+        const gridHelper = new THREE.GridHelper(5000, 100);
+        gridHelper.position.y += 0.01;
         this.scene.add(gridHelper);
-        const geometry = new THREE.PlaneGeometry(1000, 1000);
+        const geometry = new THREE.PlaneGeometry(5000, 5000);
         geometry.rotateX(-Math.PI / 2);
 
         const plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
