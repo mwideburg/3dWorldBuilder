@@ -122,6 +122,7 @@ export class ControllerService {
                 this.currentController = this.unitCreator;
                 this.unitCreator.activate();
                 this.currentController$.next("unitCreator");
+
                 break;
             case 71:
                 this.currentController.dispose();

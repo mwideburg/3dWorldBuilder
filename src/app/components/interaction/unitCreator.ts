@@ -56,6 +56,7 @@ export class UnitCreator {
             opacity: 0.5,
             transparent: true,
         });
+
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
         this.scene.add(this.rollOverMesh);
     }

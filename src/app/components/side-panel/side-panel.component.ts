@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 
 import { ControllerService } from "../controller/controller.service";
 import { FormBuilder } from "@angular/forms";
+import { UnitCreator } from "../interaction/unitCreator";
 // import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: "app-side-panel",
@@ -104,6 +105,12 @@ export class SidePanelComponent implements OnInit {
     }
 
     public swapOrientation(): void {
-        this.controllerService.swapOrientation();
+        if (this.controllerService.currentController instanceof UnitCreator) {
+            this.controllerService.swapOrientation();
+            const oldDimension = Number(this.dimensions.value.width);
+            this.dimensions.value.width = this.dimensions.value.depth;
+            this.dimensions.value.depth = oldDimension;
+            // this.onSubmit(new Event("hey"));
+        }
     }
 }

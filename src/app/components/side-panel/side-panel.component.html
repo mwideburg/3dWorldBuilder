@@ -17,7 +17,7 @@
                         <mat-label for="width">
                         Width
                         </mat-label>
-                        <input matInput id="width" type="text" formControlName="width">
+                        <input matInput id="width" type="text" formControlName="width" [value]="dimensions.value.width">
                     </div>
                 </mat-form-field>
                 <mat-form-field class="form-group" [formGroup]="dimensions">
@@ -27,7 +27,7 @@
                         <mat-label for="depth">
                         Depth
                         </mat-label >
-                        <input matInput id="depth" type="text" formControlName="depth">
+                        <input matInput id="depth" type="text" formControlName="depth" [value]="dimensions.value.depth">
                     </div>
         
                     
@@ -40,7 +40,7 @@
                         <mat-label for="height">
                         Height
                         </mat-label >
-                        <input matInput id="height" type="text" formControlName="height">
+                        <input matInput id="height" type="text" formControlName="height" [value]="dimensions.value.height">
                     </div>
         
                     
