@@ -102,4 +102,8 @@ export class SidePanelComponent implements OnInit {
             this.controllerService.changeGroupLevel(level);
         }
     }
+
+    public swapOrientation(): void {
+        this.controllerService.swapOrientation();
+    }
 }

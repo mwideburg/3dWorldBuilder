@@ -79,6 +79,12 @@ export class ControllerService {
         }
     }
 
+    public swapOrientation(): void {
+        if (this.currentController instanceof UnitCreator) {
+            this.currentController.swapOrientation();
+        }
+    }
+
     private hotKeyControlSwitch(event: any): void {
         console.log(event.keyCode);
 

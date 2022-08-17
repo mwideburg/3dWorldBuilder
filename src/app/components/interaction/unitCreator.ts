@@ -231,4 +231,25 @@ export class UnitCreator {
                 break;
         }
     }
+
+    public swapOrientation(): void {
+        this.dimensions = {
+            width: this.dimensions.depth,
+            depth: this.dimensions.width,
+            height: this.dimensions.height,
+        };
+        const rollOverGeo = new THREE.BoxGeometry(
+            this.dimensions.width,
+            this.dimensions.height,
+            this.dimensions.depth,
+        );
+        const rollOverMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            opacity: 0.5,
+            transparent: true,
+        });
+        this.scene.remove(this.rollOverMesh);
+        this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        this.scene.add(this.rollOverMesh);
+    }
 }

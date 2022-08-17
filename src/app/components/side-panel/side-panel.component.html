@@ -7,45 +7,52 @@
             <mat-button-toggle [class]="currentCotroller === 'dragAndDrop' ? 'selected' : 'not-selected'"(click)="controlSwitch(3)">Group</mat-button-toggle>
         </mat-button-toggle-group>
     </div>
-    <div *ngIf="currentCotroller === 'unitCreator'" style="border: 1px lightgray solid; display: flex; justify-content: center; padding: 25px; background-color: rgba(211, 211, 211, 0.695);">
-        <form (ngSubmit)="onSubmit($event)" style="display: flex; flex-direction: column;">
+    <div *ngIf="currentCotroller === 'unitCreator'" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(211, 211, 211, 0.695);">
+        <div>
 
-            <mat-form-field class="form-group" [formGroup]="dimensions" autocomplete="off">
-                <div class="form-group">
-                    <mat-label for="width">
-                    Width
-                    </mat-label>
-                    <input matInput id="width" type="text" formControlName="width">
-                </div>
-            </mat-form-field>
-            <mat-form-field class="form-group" [formGroup]="dimensions">
+            <form (ngSubmit)="onSubmit($event)" style="display: flex; flex-direction: column;">
     
-            
-                <div>
-                    <mat-label for="depth">
-                    Depth
-                    </mat-label >
-                    <input matInput id="depth" type="text" formControlName="depth">
-                </div>
-    
+                <mat-form-field class="form-group" [formGroup]="dimensions" autocomplete="off">
+                    <div class="form-group">
+                        <mat-label for="width">
+                        Width
+                        </mat-label>
+                        <input matInput id="width" type="text" formControlName="width">
+                    </div>
+                </mat-form-field>
+                <mat-form-field class="form-group" [formGroup]="dimensions">
+        
                 
-    
-            </mat-form-field>
-            <mat-form-field class="form-group" [formGroup]="dimensions">
-    
-            
-                <div>
-                    <mat-label for="height">
-                    Height
-                    </mat-label >
-                    <input matInput id="height" type="text" formControlName="height">
-                </div>
-    
+                    <div>
+                        <mat-label for="depth">
+                        Depth
+                        </mat-label >
+                        <input matInput id="depth" type="text" formControlName="depth">
+                    </div>
+        
+                    
+        
+                </mat-form-field>
+                <mat-form-field class="form-group" [formGroup]="dimensions">
+        
                 
-    
-            </mat-form-field>
-            <button mat-raised-button type="submit" color="accent">Change Dimensions</button>
-        </form>
+                    <div>
+                        <mat-label for="height">
+                        Height
+                        </mat-label >
+                        <input matInput id="height" type="text" formControlName="height">
+                    </div>
+        
+                    
+        
+                </mat-form-field>
+                <button mat-raised-button type="submit" color="accent">Change Dimensions</button>
+            </form>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 25px;">
+            <button mat-raised-button (click)="swapOrientation()" color="primary">Rotate</button>
+            
+        </div>
     </div>
     <div *ngIf="currentCotroller === 'orbit' && unitIsSelected" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(150, 150, 150, 0.695);">
         <form (ngSubmit)="onUnitSubmit($event)" style="display: flex; flex-direction: column;">
@@ -70,6 +77,7 @@
             <button mat-raised-button (click)="changeLevel(-1)" color="primary">-</button>
             <p>Unit Level: {{unitLevel}}</p>
         </div>
+        
     </div>
     <div *ngIf="currentCotroller === 'dragAndDrop'" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(150, 150, 150, 0.695);">
         Change Level:
