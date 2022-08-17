@@ -96,4 +96,10 @@ export class SidePanelComponent implements OnInit {
 
         this.controllerService.changeLevel(Number(level));
     }
+
+    public changeGroupLevel(level: number): void {
+        if (this.currentCotroller === "dragAndDrop") {
+            this.controllerService.changeGroupLevel(level);
+        }
+    }
 }

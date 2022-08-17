@@ -69,6 +69,16 @@ export class ControllerService {
         }
     }
 
+    public changeGroupLevel(level: number): void {
+        if (
+            this.currentController instanceof DragAndDrop &&
+            this.currentController.group.children.length > 0
+        ) {
+            console.log(level);
+            this.currentController.changeLevel(level);
+        }
+    }
+
     private hotKeyControlSwitch(event: any): void {
         console.log(event.keyCode);
 
@@ -107,7 +117,7 @@ export class ControllerService {
                 this.unitCreator.activate();
                 this.currentController$.next("unitCreator");
                 break;
-            case 83:
+            case 71:
                 this.currentController.dispose();
 
                 this.currentController = this.dragAndDrop;

@@ -42,8 +42,8 @@ export class UnitCreator {
             this.setDimensions = this.setDimensions.bind(this);
             renderDiv.addEventListener("pointermove", this.onPointerMove);
             renderDiv.addEventListener("pointerdown", this.onPointerDown);
-            renderDiv.addEventListener("keydown", this.onDocumentKeyDown);
-            renderDiv.addEventListener("keyup", this.onDocumentKeyUp);
+            document.addEventListener("keydown", this.onDocumentKeyDown);
+            document.addEventListener("keyup", this.onDocumentKeyUp);
         }
 
         const rollOverGeo = new THREE.BoxGeometry(
@@ -66,8 +66,8 @@ export class UnitCreator {
         if (renderDiv) {
             renderDiv.addEventListener("pointermove", this.onPointerMove);
             renderDiv.addEventListener("pointerdown", this.onPointerDown);
-            renderDiv.addEventListener("keydown", this.onDocumentKeyDown);
-            renderDiv.addEventListener("keyup", this.onDocumentKeyUp);
+            document.addEventListener("keydown", this.onDocumentKeyDown);
+            document.addEventListener("keyup", this.onDocumentKeyUp);
         }
 
         const rollOverGeo = new THREE.BoxGeometry(
@@ -91,8 +91,8 @@ export class UnitCreator {
         if (renderDiv) {
             renderDiv.removeEventListener("pointermove", this.onPointerMove);
             renderDiv.removeEventListener("pointerdown", this.onPointerDown);
-            renderDiv.removeEventListener("keydown", this.onDocumentKeyDown);
-            renderDiv.removeEventListener("keyup", this.onDocumentKeyUp);
+            document.removeEventListener("keydown", this.onDocumentKeyDown);
+            document.removeEventListener("keyup", this.onDocumentKeyUp);
         }
 
         this.isShiftDown = false;
@@ -178,6 +178,8 @@ export class UnitCreator {
             // delete cube
 
             if (this.isShiftDown) {
+                console.log("SHIFT IS DOWN");
+
                 if (intersect.object.name !== "plane") {
                     if (intersect.object.parent && intersect.object.parent.name === "cube") {
                         this.scene.remove(intersect.object.parent);
@@ -216,6 +218,7 @@ export class UnitCreator {
         switch (event.keyCode) {
             case 16:
                 this.isShiftDown = true;
+                console.log(this.isShiftDown);
                 break;
         }
     }
@@ -224,6 +227,7 @@ export class UnitCreator {
         switch (event.keyCode) {
             case 16:
                 this.isShiftDown = false;
+
                 break;
         }
     }
