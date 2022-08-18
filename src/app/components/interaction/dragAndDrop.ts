@@ -1,4 +1,7 @@
+import { Subject } from "rxjs";
 import * as THREE from "three";
+import { Cube } from "../units/cube";
+// import { Cube } from "../units/cube";
 // import { DragControls } from "three/examples/jsm/controls/DragControls";
 export class DragAndDrop {
     raycaster = new THREE.Raycaster();
@@ -23,6 +26,12 @@ export class DragAndDrop {
 
     isShiftDown: boolean = false;
 
+    rollOverCopyMeshGroup: THREE.Group = new THREE.Group();
+
+    isCopying: boolean = false;
+
+    addObject$: Subject<THREE.Object3D> = new Subject();
+
     constructor(
         objects: THREE.Object3D[],
         plane: THREE.Object3D[],
@@ -44,6 +53,7 @@ export class DragAndDrop {
         document.addEventListener("pointerup", this.onPointerUp);
         document.addEventListener("keydown", this.onDocumentKeyDown);
         document.addEventListener("keyup", this.onDocumentKeyUp);
+        this.scene.add(this.rollOverCopyMeshGroup);
     }
 
     public dispose(): void {
@@ -108,6 +118,48 @@ export class DragAndDrop {
 
         if (
             intersects.length > 0 &&
+            this.isCopying &&
+            this.rollOverCopyMeshGroup.children[0] instanceof THREE.Mesh
+        ) {
+            const intersect = intersects[0];
+
+            if (intersect.face) {
+                const original = new THREE.Vector3().copy(
+                    this.rollOverCopyMeshGroup.children[0].position,
+                );
+                const vect3 = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
+                vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+                // const faceHeight = intersect.object
+
+                this.rollOverCopyMeshGroup.children[0].position.set(
+                    vect3.x +
+                        (Math.floor(
+                            this.rollOverCopyMeshGroup.children[0].geometry.parameters.width / 50,
+                        ) -
+                            1) *
+                            25,
+                    this.rollOverCopyMeshGroup.children[0].position.y,
+                    vect3.z +
+                        (Math.floor(
+                            this.rollOverCopyMeshGroup.children[0].geometry.parameters.depth / 50,
+                        ) -
+                            1) *
+                            25,
+                );
+
+                const moveX = this.rollOverCopyMeshGroup.children[0].position.x - original.x;
+                const moveZ = this.rollOverCopyMeshGroup.children[0].position.z - original.z;
+                this.rollOverCopyMeshGroup.children.forEach((voxel) => {
+                    if (voxel !== this.rollOverCopyMeshGroup.children[0]) {
+                        voxel.position.x += moveX;
+                        voxel.position.z += moveZ;
+                    }
+                });
+            }
+        }
+
+        if (
+            intersects.length > 0 &&
             !this.isShiftDown &&
             this.pointerIsDown &&
             this.objectSelected
@@ -127,21 +179,11 @@ export class DragAndDrop {
                     vect3.z +
                         (Math.floor(this.unitSelected.geometry.parameters.depth / 50) - 1) * 25,
                 );
-                // this.objectSelected.position.copy(intersect.point).add(intersect.face.normal);
-                // console.log(this.objectSelected);
-                // this.objectSelected.position
-                //     .divideScalar(50)
-                //     .floor()
-                //     .multiplyScalar(50)
-                //     .addScalar(25);
-                // this.objectSelected.position.y = original.y;
 
-                // console.log(this.objectSelected);
                 const moveX = this.objectSelected.position.x - original.x;
                 const moveZ = this.objectSelected.position.z - original.z;
                 this.group.children.forEach((voxel) => {
                     if (this.objectSelected && voxel !== this.objectSelected) {
-                        console.log(voxel.position);
                         voxel.position.x += moveX;
                         voxel.position.z += moveZ;
                     }
@@ -165,12 +207,14 @@ export class DragAndDrop {
 
         const intersects = this.raycaster.intersectObjects(this.objects, false);
 
-        if (intersects.length > 0) {
+        if (intersects.length > 0 && !this.isCopying) {
             const intersect = intersects[0];
 
             // delete cube
 
             if (this.isShiftDown) {
+                console.log(intersect.object);
+
                 if (intersect.object.name !== "plane") {
                     if (intersect.object.parent && intersect.object.parent.name === "cube") {
                         if (!this.group.children.includes(intersect.object.parent)) {
@@ -189,7 +233,7 @@ export class DragAndDrop {
                     }
                 }
 
-                // create cube
+                // move group
             } else {
                 if (intersect.face) {
                     if (
@@ -210,6 +254,28 @@ export class DragAndDrop {
                     this.objectSelected = null;
                 }
             }
+        }
+
+        if (this.isCopying && this.rollOverCopyMeshGroup.children.length > 0) {
+            console.log("CLICK COPYING");
+
+            this.rollOverCopyMeshGroup.children.forEach((child: any) => {
+                const cube = new Cube({
+                    width: child.geometry.parameters.width,
+                    height: child.geometry.parameters.height,
+                    depth: child.geometry.parameters.depth,
+                });
+
+                cube.group.position.set(child.position.x, child.position.y, child.position.z);
+                this.objects.push(cube.mesh);
+                this.addObject$.next(cube.mesh);
+
+                this.scene.add(cube.group);
+            });
+            this.scene.remove(this.rollOverCopyMeshGroup);
+            this.rollOverCopyMeshGroup = new THREE.Group();
+            this.scene.add(this.rollOverCopyMeshGroup);
+            this.isCopying = false;
         }
     }
 
@@ -240,5 +306,38 @@ export class DragAndDrop {
                 }
             });
         }
+    }
+
+    public combineUnitsIntoOne(): void {
+        // comibing units that aren't in a line?
+        // add width and depth by taking position and halving the width and depth
+        // take min height or max
+        console.log("COMBINE UNITS");
+    }
+
+    public copyGroupOfUnits(): void {
+        this.group.children.forEach((child: any) => {
+            child.children.forEach((mesh: any) => {
+                if (mesh.name === "Unit") {
+                    const rollOverGeo = new THREE.BoxGeometry(
+                        mesh.geometry.parameters.width,
+                        mesh.geometry.parameters.height,
+                        mesh.geometry.parameters.depth,
+                    );
+                    const rollOverMaterial = new THREE.MeshBasicMaterial({
+                        color: 0xff0000,
+                        opacity: 0.5,
+                        transparent: true,
+                    });
+
+                    const rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+                    rollOverMesh.position.set(child.position.x, child.position.y, child.position.z);
+                    this.rollOverCopyMeshGroup.add(rollOverMesh);
+                }
+            });
+        });
+        this.isCopying = true;
+        // this.scene.add(this.rollOverCopyMeshGroup);
+        console.log("COPYING UNITS");
     }
 }

@@ -85,6 +85,20 @@ export class ControllerService {
         }
     }
 
+    public combineUnits(): void {
+        if (this.currentController instanceof DragAndDrop) {
+            this.currentController.combineUnitsIntoOne();
+            // this.unitCreator.objects = units;
+        }
+    }
+
+    public copyGroupOfUnits(): void {
+        if (this.currentController instanceof DragAndDrop) {
+            this.currentController.copyGroupOfUnits();
+            // this.unitCreator.objects = units;
+        }
+    }
+
     private hotKeyControlSwitch(event: any): void {
         console.log(event.keyCode);
 
@@ -132,6 +146,9 @@ export class ControllerService {
                     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
                     this.unitCreator.objects.filter((obj) => obj.name === "plane"),
                 );
+                this.dragAndDrop.addObject$.subscribe((object: THREE.Object3D) => {
+                    this.unitCreator.objects.push(object);
+                });
                 this.currentController$.next("dragAndDrop");
                 break;
             default:
@@ -179,6 +196,9 @@ export class ControllerService {
                     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
                     this.unitCreator.objects.filter((obj) => obj.name === "plane"),
                 );
+                this.dragAndDrop.addObject$.subscribe((object: THREE.Object3D) => {
+                    this.unitCreator.objects.push(object);
+                });
                 this.currentController$.next("dragAndDrop");
                 break;
             default:

@@ -113,4 +113,12 @@ export class SidePanelComponent implements OnInit {
             // this.onSubmit(new Event("hey"));
         }
     }
+
+    public combineUnits(): void {
+        this.controllerService.combineUnits();
+    }
+
+    public copyGroupOfUnits(): void {
+        this.controllerService.copyGroupOfUnits();
+    }
 }

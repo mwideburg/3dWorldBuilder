@@ -1,4 +1,4 @@
-<div style="position: absolute; display: flex; flex-direction: column;">
+<div style="position: absolute; display: flex; flex-direction: column; z-index: 10;">
     <div style="display: flex; flex-direction: row;">
         
         <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
@@ -20,7 +20,7 @@
                         <input matInput id="width" type="text" formControlName="width" [value]="dimensions.value.width">
                     </div>
                 </mat-form-field>
-                <mat-form-field class="form-group" [formGroup]="dimensions">
+                <mat-form-field class="form-group" [formGroup]="dimensions"  autocomplete="off">
         
                 
                     <div>
@@ -33,7 +33,7 @@
                     
         
                 </mat-form-field>
-                <mat-form-field class="form-group" [formGroup]="dimensions">
+                <mat-form-field class="form-group" [formGroup]="dimensions"  autocomplete="off">
         
                 
                     <div>
@@ -85,6 +85,13 @@
             <button mat-raised-button (click)="changeGroupLevel(1)" color="primary">+</button>
             <button mat-raised-button (click)="changeGroupLevel(-1)" color="primary">-</button>
             
+        </div>
+        
+        <div>
+            <button mat-raised-button (click)="combineUnits()" color="primary">Combine Units</button>
+        </div>
+        <div>
+            <button mat-raised-button (click)="copyGroupOfUnits()" color="primary">Copy Units</button>
         </div>
     </div>
 
