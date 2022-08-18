@@ -48,21 +48,31 @@ export class DragAndDrop {
         this.onPointerUp = this.onPointerUp.bind(this);
         this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
         this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
-        document.addEventListener("pointermove", this.onPointerMove);
-        document.addEventListener("pointerdown", this.onPointerDown);
-        document.addEventListener("pointerup", this.onPointerUp);
-        document.addEventListener("keydown", this.onDocumentKeyDown);
-        document.addEventListener("keyup", this.onDocumentKeyUp);
+        const renderDiv = document.getElementById("renderDiv");
+
+        if (renderDiv) {
+            renderDiv.addEventListener("pointermove", this.onPointerMove);
+            renderDiv.addEventListener("pointerdown", this.onPointerDown);
+            renderDiv.addEventListener("pointerup", this.onPointerUp);
+            document.addEventListener("keydown", this.onDocumentKeyDown);
+            document.addEventListener("keyup", this.onDocumentKeyUp);
+        }
+
         this.scene.add(this.rollOverCopyMeshGroup);
     }
 
     public dispose(): void {
         console.log("DISPOSING DRAG AND DROP");
-        document.removeEventListener("pointermove", this.onPointerMove);
-        document.removeEventListener("pointerdown", this.onPointerDown);
-        document.removeEventListener("pointerup", this.onPointerUp);
-        document.removeEventListener("keydown", this.onDocumentKeyDown);
-        document.removeEventListener("keyup", this.onDocumentKeyUp);
+        const renderDiv = document.getElementById("renderDiv");
+
+        if (renderDiv) {
+            renderDiv.removeEventListener("pointermove", this.onPointerMove);
+            renderDiv.removeEventListener("pointerdown", this.onPointerDown);
+            renderDiv.removeEventListener("pointerup", this.onPointerUp);
+            document.removeEventListener("keydown", this.onDocumentKeyDown);
+            document.removeEventListener("keyup", this.onDocumentKeyUp);
+        }
+
         this.group.children.forEach((child) => {
             child.children.forEach((mesh) => {
                 if (mesh instanceof THREE.Mesh && mesh.name === "Unit") {
@@ -75,11 +85,16 @@ export class DragAndDrop {
 
     public disposeTemp(): void {
         console.log("DISPOSING DRAG AND DROP");
-        document.removeEventListener("pointermove", this.onPointerMove);
-        document.removeEventListener("pointerdown", this.onPointerDown);
-        document.removeEventListener("pointerup", this.onPointerUp);
-        document.removeEventListener("keydown", this.onDocumentKeyDown);
-        document.removeEventListener("keyup", this.onDocumentKeyUp);
+        const renderDiv = document.getElementById("renderDiv");
+
+        if (renderDiv) {
+            renderDiv.removeEventListener("pointermove", this.onPointerMove);
+            renderDiv.removeEventListener("pointerdown", this.onPointerDown);
+            renderDiv.removeEventListener("pointerup", this.onPointerUp);
+            document.removeEventListener("keydown", this.onDocumentKeyDown);
+            document.removeEventListener("keyup", this.onDocumentKeyUp);
+        }
+
         this.group.children.forEach((child) => {
             child.children.forEach((mesh) => {
                 if (mesh instanceof THREE.Mesh && mesh.name === "Unit") {
@@ -92,11 +107,17 @@ export class DragAndDrop {
     public activate(objects: THREE.Object3D[], plane: THREE.Object3D[]): void {
         this.objects = objects;
         this.plane = plane;
-        document.addEventListener("pointermove", this.onPointerMove);
-        document.addEventListener("pointerdown", this.onPointerDown);
-        document.addEventListener("pointerup", this.onPointerUp);
-        document.addEventListener("keydown", this.onDocumentKeyDown);
-        document.addEventListener("keyup", this.onDocumentKeyUp);
+        const renderDiv = document.getElementById("renderDiv");
+        this.isShiftDown = false;
+
+        if (renderDiv) {
+            renderDiv.addEventListener("pointermove", this.onPointerMove);
+            renderDiv.addEventListener("pointerdown", this.onPointerDown);
+            renderDiv.addEventListener("pointerup", this.onPointerUp);
+            document.addEventListener("keydown", this.onDocumentKeyDown);
+            document.addEventListener("keyup", this.onDocumentKeyUp);
+        }
+
         this.group.children.forEach((child) => {
             child.children.forEach((mesh) => {
                 if (mesh instanceof THREE.Mesh && mesh.name === "Unit") {
@@ -298,12 +319,16 @@ export class DragAndDrop {
     public changeLevel(level: number): void {
         console.log(level);
 
-        if (this.group) {
+        if (this.group && !this.isCopying) {
             // this.selectedObject;
             this.group.children.forEach((child) => {
                 if (child.name === "cube") {
                     child.position.y += Math.floor(level * 100);
                 }
+            });
+        } else {
+            this.rollOverCopyMeshGroup.children.forEach((child) => {
+                child.position.y += Math.floor(level * 100);
             });
         }
     }
