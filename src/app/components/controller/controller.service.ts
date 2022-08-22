@@ -50,6 +50,13 @@ export class ControllerService {
             this.camera,
             this.scene,
         );
+        this.dragAndDrop.combinedUnits$.subscribe(
+            (units: { add: THREE.Object3D; remove: THREE.Object3D[] }) => {
+                this.unitCreator.objects.push(units.add);
+                this.scene.add(units.add);
+                this.unitCreator.removeObjects(units.remove);
+            },
+        );
     }
 
     public setDimensions(dimensions: Dimension): void {

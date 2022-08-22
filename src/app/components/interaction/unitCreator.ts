@@ -62,6 +62,7 @@ export class UnitCreator {
     }
 
     public activate(): void {
+        console.log("ACTIVATING");
         const renderDiv = document.getElementById("renderDiv");
 
         if (renderDiv) {
@@ -71,6 +72,7 @@ export class UnitCreator {
             document.addEventListener("keyup", this.onDocumentKeyUp);
         }
 
+        console.log(this.objects);
         const rollOverGeo = new THREE.BoxGeometry(
             this.dimensions.width,
             this.dimensions.height,
@@ -252,5 +254,10 @@ export class UnitCreator {
         this.scene.remove(this.rollOverMesh);
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
         this.scene.add(this.rollOverMesh);
+    }
+
+    public removeObjects(objects: THREE.Object3D[]): void {
+        this.objects = this.objects.filter((obj) => !objects.includes(obj));
+        objects.forEach((obj) => this.scene.remove(obj));
     }
 }

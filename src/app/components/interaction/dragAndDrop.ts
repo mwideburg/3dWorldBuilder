@@ -1,5 +1,6 @@
 import { Subject } from "rxjs";
 import * as THREE from "three";
+
 import { Cube } from "../units/cube";
 // import { Cube } from "../units/cube";
 // import { DragControls } from "three/examples/jsm/controls/DragControls";
@@ -31,6 +32,8 @@ export class DragAndDrop {
     isCopying: boolean = false;
 
     addObject$: Subject<THREE.Object3D> = new Subject();
+
+    combinedUnits$: Subject<{ add: THREE.Object3D; remove: THREE.Object3D[] }> = new Subject();
 
     constructor(
         objects: THREE.Object3D[],
@@ -337,6 +340,50 @@ export class DragAndDrop {
         // comibing units that aren't in a line?
         // add width and depth by taking position and halving the width and depth
         // take min height or max
+        if (this.group.children.length !== 2) {
+            return;
+        }
+
+        const meshes: any[] = [];
+        const positions: any[] = [];
+        this.group.children.forEach((child: any) => {
+            positions.push(child.position);
+            child.children.forEach((c: THREE.Mesh) => {
+                if (c instanceof THREE.Mesh) {
+                    meshes.push(c);
+                }
+            });
+        });
+        const dims = { width: 0, depth: 0, height: 100 };
+        console.log(meshes);
+
+        if (positions[0].x === positions[1].x) {
+            console.log("X's equal");
+            dims.width = meshes[0].geometry.parameters.width;
+            dims.depth = meshes[0].geometry.parameters.depth + meshes[1].geometry.parameters.depth;
+        } else {
+            dims.depth = meshes[0].geometry.parameters.depth;
+            dims.width = meshes[0].geometry.parameters.width + meshes[1].geometry.parameters.width;
+        }
+
+        const cube = new Cube(dims);
+        const position = new THREE.Vector3().add(positions[0]).add(positions[1]).divideScalar(2);
+        cube.group.position.set(position.x, position.y, position.z);
+        console.log("Objects BEFORE", this.objects);
+        console.log("Meshes", meshes);
+        this.objects = this.objects.filter((obj) => {
+            return !meshes.includes(obj);
+        });
+        this.scene.remove(this.group);
+        this.objects.push(cube.mesh);
+        this.combinedUnits$.next({
+            add: cube.group,
+            remove: this.group.children,
+        });
+        console.log("OBJECTs", this.objects);
+
+        this.group = new THREE.Group();
+        this.scene.add(this.group);
         console.log("COMBINE UNITS");
     }
 
