@@ -5,6 +5,7 @@ import { Orbit } from "../interaction/orbit";
 import { DragAndDrop } from "../interaction/dragAndDrop";
 import { Subject } from "rxjs";
 import { Dimension } from "../types/dimensionType";
+import { Cube } from "../units/cube";
 @Injectable({
     providedIn: "root",
 })
@@ -51,10 +52,11 @@ export class ControllerService {
             this.scene,
         );
         this.dragAndDrop.combinedUnits$.subscribe(
-            (units: { add: THREE.Object3D; remove: THREE.Object3D[] }) => {
-                this.unitCreator.objects.push(units.add);
-                this.scene.add(units.add);
+            (units: { add: Cube; remove: THREE.Object3D[] }) => {
+                this.unitCreator.objects.push(units.add.mesh);
+                this.scene.add(units.add.group);
                 this.unitCreator.removeObjects(units.remove);
+                units.remove.forEach((obj) => this.scene.remove(obj));
             },
         );
     }

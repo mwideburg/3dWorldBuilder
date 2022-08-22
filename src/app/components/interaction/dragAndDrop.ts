@@ -33,7 +33,7 @@ export class DragAndDrop {
 
     addObject$: Subject<THREE.Object3D> = new Subject();
 
-    combinedUnits$: Subject<{ add: THREE.Object3D; remove: THREE.Object3D[] }> = new Subject();
+    combinedUnits$: Subject<{ add: Cube; remove: THREE.Object3D[] }> = new Subject();
 
     constructor(
         objects: THREE.Object3D[],
@@ -377,7 +377,7 @@ export class DragAndDrop {
         this.scene.remove(this.group);
         this.objects.push(cube.mesh);
         this.combinedUnits$.next({
-            add: cube.group,
+            add: cube,
             remove: this.group.children,
         });
         console.log("OBJECTs", this.objects);
