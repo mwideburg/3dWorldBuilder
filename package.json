@@ -23,8 +23,8 @@
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "rxjs": "^6.6.7",
-    "three": "^0.142.0",
     "tslib": "^2.0.0",
+    "three": "^0.142.0",
     "zone.js": "~0.11.3"
   },
   "devDependencies": {
@@ -39,7 +39,7 @@
     "@types/jasmine": "~3.6.0",
     "@types/jest": "^28.1.1",
     "@types/node": "^12.11.1",
-    "@types/three": "^0.143.0",
+    "@types/three": "^0.143.1",
     "autoprefixer": "^10.4.4",
     "babel-plugin-transform-require-context": "^0.1.1",
     "chroma-js": "^2.4.2",
@@ -61,6 +61,7 @@
     "prettier": "^2.5.1",
     "prettier-eslint": "^13.0.0",
     "protractor": "~7.0.0",
+    "three": "^0.142.0",
     "ts-jest": "^28.0.4",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",

@@ -56,7 +56,7 @@ export class RenderEngine {
     render(): void {
         requestAnimationFrame(this.render);
 
-        if (this.controllerService.currentController instanceof Orbit) {
+        if (this.controllerService && this.controllerService.currentController instanceof Orbit) {
             this.controllerService.currentController.controls.update();
         }
 

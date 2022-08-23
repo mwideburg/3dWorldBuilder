@@ -1,6 +1,8 @@
 import { Subject } from "rxjs";
+// import * as THREE from "three";
 import * as THREE from "three";
-
+// import { SelectionBox } from "three/examples/jsm/interactive/SelectionBox";
+// import { SelectionHelper } from "three/examples/jsm/interactive/SelectionHelper";
 import { Cube } from "../units/cube";
 // import { Cube } from "../units/cube";
 // import { DragControls } from "three/examples/jsm/controls/DragControls";
@@ -35,17 +37,31 @@ export class DragAndDrop {
 
     combinedUnits$: Subject<{ add: Cube; remove: THREE.Object3D[] }> = new Subject();
 
+    // selectionBox: SelectionBox;
+
+    // selectionHelper: SelectionHelper;
+
+    // renderer: THREE.WebGLRenderer;
+
     constructor(
         objects: THREE.Object3D[],
         plane: THREE.Object3D[],
         camera: THREE.PerspectiveCamera,
         scene: THREE.Scene,
+        // selectionBox: SelectionBox,
+        // selectionHelper: SelectionHelper,
+        // renderer: any,
     ) {
+        // this.renderer = renderer;
         this.camera = camera;
         this.objects = objects;
         this.scene = scene;
         this.plane = plane;
         this.scene.add(this.group);
+        // this.selectionBox = selectionBox;
+        // this.selectionHelper = selectionHelper;
+        // this.selectionBox = new SelectionBox(this.camera, this.scene);
+        // this.selectionHelper = new SelectionHelper(this.selectionBox, this.renderer, "select Box");
         this.onPointerMove = this.onPointerMove.bind(this);
         this.onPointerDown = this.onPointerDown.bind(this);
         this.onPointerUp = this.onPointerUp.bind(this);
@@ -136,6 +152,29 @@ export class DragAndDrop {
             -(event.clientY / window.innerHeight) * 2 + 1,
         );
 
+        // if (this.selectionHelper.isDown) {
+        //     console.log(this.selectionHelper);
+
+        //     for (let i = 0; i < this.selectionBox.collection.length; i++) {
+        //         const box: any = this.selectionBox.collection[i].material;
+        //         box.color.set(0x000000);
+        //     }
+
+        //     this.selectionBox.endPoint.set(
+        //         (event.clientX / window.innerWidth) * 2 - 1,
+        //         -(event.clientY / window.innerHeight) * 2 + 1,
+        //         0.5,
+        //     );
+
+        //     const allSelected = this.selectionBox.select();
+
+        //     allSelected.forEach((item: any) => {
+        //         if (item.material) {
+        //             item.material.color.set(0x000000);
+        //         }
+        //     });
+        // }
+
         this.raycaster.setFromCamera(this.pointer, this.camera);
 
         const intersects = this.raycaster.intersectObjects(this.plane, false);
@@ -218,6 +257,19 @@ export class DragAndDrop {
 
     public onPointerUp(): void {
         this.pointerIsDown = false;
+        // this.selectionBox.endPoint.set(
+        //     (event.clientX / window.innerWidth) * 2 - 1,
+        //     -(event.clientY / window.innerHeight) * 2 + 1,
+        //     0.5,
+        // );
+
+        // const allSelected = this.selectionBox.select();
+
+        // allSelected.forEach((item: any) => {
+        //     if (item.material) {
+        //         item.material.emissive.set(0x000000);
+        //     }
+        // });
     }
 
     public onPointerDown(event: any): void {
@@ -226,6 +278,18 @@ export class DragAndDrop {
             (event.clientX / window.innerWidth) * 2 - 1,
             -(event.clientY / window.innerHeight) * 2 + 1,
         );
+
+        // this.selectionBox.collection.forEach((item: any) => {
+        //     if (item.material) {
+        //         item.material.emissive.set(0x000000);
+        //     }
+        // });
+
+        // this.selectionBox.startPoint.set(
+        //     (event.clientX / window.innerWidth) * 2 - 1,
+        //     -(event.clientY / window.innerHeight) * 2 + 1,
+        //     0.5,
+        // );
 
         this.raycaster.setFromCamera(this.pointer, this.camera);
 
@@ -245,6 +309,8 @@ export class DragAndDrop {
                             if (intersect.object instanceof THREE.Mesh) {
                                 intersect.object.material.color.set("red");
                             }
+
+                            // console.log("CLICK", this.group);
 
                             this.group.attach(intersect.object.parent);
                         } else {
@@ -320,7 +386,7 @@ export class DragAndDrop {
     }
 
     public changeLevel(level: number): void {
-        console.log(level);
+        // console.log(level);
 
         if (this.group && !this.isCopying) {
             // this.selectedObject;
@@ -355,10 +421,10 @@ export class DragAndDrop {
             });
         });
         const dims = { width: 0, depth: 0, height: 100 };
-        console.log(meshes);
+        // console.log(meshes);
 
         if (positions[0].x === positions[1].x) {
-            console.log("X's equal");
+            // console.log("X's equal");
             dims.width = meshes[0].geometry.parameters.width;
             dims.depth = meshes[0].geometry.parameters.depth + meshes[1].geometry.parameters.depth;
         } else {
@@ -411,5 +477,22 @@ export class DragAndDrop {
         this.isCopying = true;
         // this.scene.add(this.rollOverCopyMeshGroup);
         console.log("COPYING UNITS");
+    }
+
+    public deselectAll(): void {
+        // console.log(this.group);
+        const children: any[] = [];
+        this.group.children.forEach((child) => {
+            children.push(child);
+            child.children.forEach((c) => {
+                if (c instanceof THREE.Mesh) {
+                    c.material.color.set(0xaaaaaa);
+                }
+            });
+        });
+        children.forEach((c) => this.scene.attach(c));
+
+        console.log(this.group);
+        this.objectSelected = null;
     }
 }

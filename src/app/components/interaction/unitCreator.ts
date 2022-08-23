@@ -134,6 +134,9 @@ export class UnitCreator {
             const intersect = intersects[0];
 
             if (intersect.face) {
+                const addXAxis = (this.dimensions.width / 2) % 50;
+                const addZAxis = (this.dimensions.depth / 2) % 50;
+
                 if (intersect.object.name === "plane") {
                     const vect3 = new THREE.Vector3()
                         .copy(intersect.point)
@@ -142,9 +145,9 @@ export class UnitCreator {
                     // const faceHeight = intersect.object
 
                     this.rollOverMesh.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
                     );
                 }
 
@@ -156,9 +159,9 @@ export class UnitCreator {
                     // const faceHeight = intersect.object
 
                     this.rollOverMesh.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
                     );
                 }
             }
@@ -202,10 +205,14 @@ export class UnitCreator {
                         .copy(intersect.point)
                         .add(intersect.face.normal);
                     vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+
+                    const addXAxis = (this.dimensions.width / 2) % 50;
+                    const addZAxis = (this.dimensions.depth / 2) % 50;
+                    console.log(addXAxis, addZAxis);
                     voxel.group.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
                     );
 
                     this.scene.add(voxel.group);

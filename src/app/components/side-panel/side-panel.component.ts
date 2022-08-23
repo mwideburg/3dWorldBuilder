@@ -121,4 +121,8 @@ export class SidePanelComponent implements OnInit {
     public copyGroupOfUnits(): void {
         this.controllerService.copyGroupOfUnits();
     }
+
+    public deselectAll(): void {
+        this.controllerService.deselectAll();
+    }
 }

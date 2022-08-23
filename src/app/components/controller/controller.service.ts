@@ -6,6 +6,7 @@ import { DragAndDrop } from "../interaction/dragAndDrop";
 import { Subject } from "rxjs";
 import { Dimension } from "../types/dimensionType";
 import { Cube } from "../units/cube";
+
 @Injectable({
     providedIn: "root",
 })
@@ -41,16 +42,19 @@ export class ControllerService {
         this.plane = plane;
         this.unitCreator = new UnitCreator(this.camera, [plane], this.scene);
         this.currentController = this.unitCreator;
-        this.controlSwitch = this.controlSwitch.bind(this);
-        this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
-        document.addEventListener("keydown", this.hotKeyControlSwitch);
-        this.currentController$.next("unitCreator");
+
         this.dragAndDrop = new DragAndDrop(
             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
             this.unitCreator.objects.filter((obj) => obj.name === "plane"),
             this.camera,
             this.scene,
+
+            // this.renderer,
         );
+        this.controlSwitch = this.controlSwitch.bind(this);
+        this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
+        document.addEventListener("keydown", this.hotKeyControlSwitch);
+        this.currentController$.next("unitCreator");
         this.dragAndDrop.combinedUnits$.subscribe(
             (units: { add: Cube; remove: THREE.Object3D[] }) => {
                 this.unitCreator.objects.push(units.add.mesh);
@@ -83,7 +87,7 @@ export class ControllerService {
             this.currentController instanceof DragAndDrop &&
             this.currentController.group.children.length > 0
         ) {
-            console.log(level);
+            // console.log(level);
             this.currentController.changeLevel(level);
         }
     }
@@ -108,8 +112,15 @@ export class ControllerService {
         }
     }
 
+    public deselectAll(): void {
+        if (this.currentController instanceof DragAndDrop) {
+            this.currentController.deselectAll();
+            // this.unitCreator.objects = units;
+        }
+    }
+
     private hotKeyControlSwitch(event: any): void {
-        console.log(event.keyCode);
+        // console.log(event.keyCode);
 
         switch (event.keyCode) {
             case 79:
@@ -130,7 +141,7 @@ export class ControllerService {
                 );
                 this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
                     if (data.name) {
-                        console.log("CONTROLLER", data.name);
+                        // console.log("CONTROLLER", data.name);
                         this.selectedUnitData$.next({
                             name: data.name,
                             attributes: [],
@@ -181,7 +192,7 @@ export class ControllerService {
                 );
                 this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
                     if (data.name) {
-                        console.log("CONTROLLER", data.name);
+                        // console.log("CONTROLLER", data.name);
                         this.selectedUnitData$.next({
                             name: data.name,
                             attributes: [],
