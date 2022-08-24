@@ -94,7 +94,7 @@ export class DragAndDrop {
 
         this.group.children.forEach((child) => {
             child.children.forEach((mesh) => {
-                if (mesh instanceof THREE.Mesh && mesh.name === "Unit") {
+                if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
                     mesh.material.color.set(0xaaaaaa);
                 }
             });
@@ -116,7 +116,7 @@ export class DragAndDrop {
 
         this.group.children.forEach((child) => {
             child.children.forEach((mesh) => {
-                if (mesh instanceof THREE.Mesh && mesh.name === "Unit") {
+                if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
                     mesh.material.color.set(0xaaaaaa);
                 }
             });
@@ -139,7 +139,7 @@ export class DragAndDrop {
 
         this.group.children.forEach((child) => {
             child.children.forEach((mesh) => {
-                if (mesh instanceof THREE.Mesh && mesh.name === "Unit") {
+                if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
                     mesh.material.color.set("red");
                 }
             });
@@ -456,7 +456,7 @@ export class DragAndDrop {
     public copyGroupOfUnits(): void {
         this.group.children.forEach((child: any) => {
             child.children.forEach((mesh: any) => {
-                if (mesh.name === "Unit") {
+                if (mesh.name === "cube") {
                     const rollOverGeo = new THREE.BoxGeometry(
                         mesh.geometry.parameters.width,
                         mesh.geometry.parameters.height,

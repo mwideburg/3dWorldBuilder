@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import * as THREE from "three";
-import { Orbit } from "../interaction/orbit";
+// import { Orbit } from "../interaction/orbit";
 
 import { Injectable, NgZone } from "@angular/core";
 import { ControllerService } from "../controller/controller.service";
+import { InteractionService } from "../interaction/interactionService";
 
 @Injectable({ providedIn: "root" })
 export class RenderEngine {
@@ -56,7 +57,11 @@ export class RenderEngine {
     render(): void {
         requestAnimationFrame(this.render);
 
-        if (this.controllerService && this.controllerService.currentController instanceof Orbit) {
+        if (
+            this.controllerService &&
+            this.controllerService.currentController instanceof InteractionService &&
+            this.controllerService.currentController.controls
+        ) {
             this.controllerService.currentController.controls.update();
         }
 

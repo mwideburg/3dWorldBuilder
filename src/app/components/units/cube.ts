@@ -20,8 +20,8 @@ export class Cube {
             edges,
             new THREE.LineBasicMaterial({ color: 0xffffff }),
         );
-        this.mesh.name = "Unit";
-        this.group.name = "cube";
+        this.mesh.name = "cube";
+        this.group.name = "unit";
         this.group.add(this.mesh);
         this.group.add(this.edges);
     }

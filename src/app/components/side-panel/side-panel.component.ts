@@ -105,13 +105,10 @@ export class SidePanelComponent implements OnInit {
     }
 
     public swapOrientation(): void {
-        if (this.controllerService.currentController instanceof UnitCreator) {
-            this.controllerService.swapOrientation();
-            const oldDimension = Number(this.dimensions.value.width);
-            this.dimensions.value.width = this.dimensions.value.depth;
-            this.dimensions.value.depth = oldDimension;
-            // this.onSubmit(new Event("hey"));
-        }
+        this.controllerService.unitCreator.swapOrientation();
+        const oldDimension = Number(this.dimensions.value.width);
+        this.dimensions.value.width = this.dimensions.value.depth;
+        this.dimensions.value.depth = oldDimension;
     }
 
     public combineUnits(): void {

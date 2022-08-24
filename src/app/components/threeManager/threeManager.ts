@@ -2,13 +2,18 @@ import * as THREE from "three";
 import { Injectable } from "@angular/core";
 import { ControllerService } from "../controller/controller.service";
 import { RenderEngine } from "../renderer/renderEngine";
+import { ObjectManager } from "../objectService/objectManager";
 @Injectable({ providedIn: "root" })
 export class ThreeManager {
     scene: THREE.Scene = new THREE.Scene();
 
     camera: THREE.PerspectiveCamera;
 
-    constructor(public renderEngine: RenderEngine, private controllerService: ControllerService) {
+    constructor(
+        public renderEngine: RenderEngine,
+        private controllerService: ControllerService,
+        private objectManager: ObjectManager,
+    ) {
         this.camera = new THREE.PerspectiveCamera(
             45,
             window.innerWidth / window.innerHeight,
@@ -28,14 +33,23 @@ export class ThreeManager {
         const plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
         plane.name = "plane";
         this.scene.add(plane);
-
+        this.objectManager.objects.push(plane);
         this.renderEngine.createRenderEngine(this.scene, this.camera);
         this.controllerService.createController(
             this.camera,
-            plane,
+            this.objectManager.objects,
             this.renderEngine.renderer,
             this.scene,
         );
+
+        this.controllerService.unitCreator.addObject$.subscribe((object: THREE.Object3D) => {
+            this.objectManager.addCubeObject(object);
+            this.scene.add(object);
+        });
+        this.controllerService.unitCreator.removeObject$.subscribe((object: THREE.Object3D) => {
+            this.objectManager.removeCubeObject(object);
+            this.scene.remove(object);
+        });
         this.renderEngine.addControllerService(this.controllerService);
     }
 }

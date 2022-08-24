@@ -19,7 +19,7 @@ export class UnitCreator {
 
     scene: THREE.Scene;
 
-    isShiftDown: boolean = false;
+    // isShiftDown: boolean = false;
 
     dimensions: Dimension;
 
@@ -36,14 +36,14 @@ export class UnitCreator {
 
         if (renderDiv) {
             this.onPointerMove = this.onPointerMove.bind(this);
-            this.onPointerDown = this.onPointerDown.bind(this);
-            this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
-            this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
+            // this.onPointerDown = this.onPointerDown.bind(this);
+            // this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
+            // this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
             this.setDimensions = this.setDimensions.bind(this);
-            renderDiv.addEventListener("pointermove", this.onPointerMove);
-            renderDiv.addEventListener("pointerdown", this.onPointerDown);
-            document.addEventListener("keydown", this.onDocumentKeyDown);
-            document.addEventListener("keyup", this.onDocumentKeyUp);
+            // renderDiv.addEventListener("pointermove", this.onPointerMove);
+            // renderDiv.addEventListener("pointerdown", this.onPointerDown);
+            // document.addEventListener("keydown", this.onDocumentKeyDown);
+            // document.addEventListener("keyup", this.onDocumentKeyUp);
         }
 
         const rollOverGeo = new THREE.BoxGeometry(
@@ -58,6 +58,7 @@ export class UnitCreator {
         });
 
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        this.rollOverMesh.name = "rollOverMesh";
         this.scene.add(this.rollOverMesh);
     }
 
@@ -66,13 +67,13 @@ export class UnitCreator {
         const renderDiv = document.getElementById("renderDiv");
 
         if (renderDiv) {
-            renderDiv.addEventListener("pointermove", this.onPointerMove);
-            renderDiv.addEventListener("pointerdown", this.onPointerDown);
-            document.addEventListener("keydown", this.onDocumentKeyDown);
-            document.addEventListener("keyup", this.onDocumentKeyUp);
+            // renderDiv.addEventListener("pointermove", this.onPointerMove);
+            // renderDiv.addEventListener("pointerdown", this.onPointerDown);
+            // document.addEventListener("keydown", this.onDocumentKeyDown);
+            // document.addEventListener("keyup", this.onDocumentKeyUp);
         }
 
-        console.log(this.objects);
+        // console.log(this.objects);
         const rollOverGeo = new THREE.BoxGeometry(
             this.dimensions.width,
             this.dimensions.height,
@@ -84,6 +85,7 @@ export class UnitCreator {
             transparent: true,
         });
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+        this.rollOverMesh.name = "rollOverMesh";
         this.scene.add(this.rollOverMesh);
     }
 
@@ -92,13 +94,13 @@ export class UnitCreator {
         const renderDiv = document.getElementById("renderDiv");
 
         if (renderDiv) {
-            renderDiv.removeEventListener("pointermove", this.onPointerMove);
-            renderDiv.removeEventListener("pointerdown", this.onPointerDown);
-            document.removeEventListener("keydown", this.onDocumentKeyDown);
-            document.removeEventListener("keyup", this.onDocumentKeyUp);
+            // renderDiv.removeEventListener("pointermove", this.onPointerMove);
+            // renderDiv.removeEventListener("pointerdown", this.onPointerDown);
+            // document.removeEventListener("keydown", this.onDocumentKeyDown);
+            // document.removeEventListener("keyup", this.onDocumentKeyUp);
         }
 
-        this.isShiftDown = false;
+        // this.isShiftDown = false;
         this.scene.remove(this.rollOverMesh);
     }
 
@@ -120,15 +122,9 @@ export class UnitCreator {
         this.scene.add(this.rollOverMesh);
     }
 
-    private onPointerMove(event: any): void {
-        this.pointer.set(
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1,
-        );
-
-        this.raycaster.setFromCamera(this.pointer, this.camera);
-
-        const intersects = this.raycaster.intersectObjects(this.objects, false);
+    public onPointerMove(raycaster: THREE.Raycaster, objects: THREE.Object3D[]): void {
+        const intersects = raycaster.intersectObjects(objects, false);
+        // console.log(objects);
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
@@ -145,13 +141,13 @@ export class UnitCreator {
                     // const faceHeight = intersect.object
 
                     this.rollOverMesh.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
                     );
                 }
 
-                if (intersect.object.name === "Unit") {
+                if (intersect.object.name === "cube") {
                     const vect3 = new THREE.Vector3()
                         .copy(intersect.point)
                         .add(intersect.face.normal);
@@ -159,48 +155,48 @@ export class UnitCreator {
                     // const faceHeight = intersect.object
 
                     this.rollOverMesh.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
                     );
                 }
             }
         }
     }
 
-    private onPointerDown(event: any): void {
-        this.pointer.set(
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1,
-        );
-
-        this.raycaster.setFromCamera(this.pointer, this.camera);
-
-        const intersects = this.raycaster.intersectObjects(this.objects, false);
+    public click(
+        raycaster: THREE.Raycaster,
+        isShiftDown: boolean,
+        objects: THREE.Object3D[],
+    ): void {
+        // console.log(this.objects);
+        const intersects = raycaster.intersectObjects(objects, false);
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
-
+            console.log(intersects);
             // delete cube
 
-            if (this.isShiftDown) {
+            if (isShiftDown) {
                 console.log("SHIFT IS DOWN");
 
                 if (intersect.object.name !== "plane") {
-                    if (intersect.object.parent && intersect.object.parent.name === "cube") {
-                        this.scene.remove(intersect.object.parent);
+                    if (intersect.object.parent && intersect.object.parent.name === "unit") {
+                        console.log(intersect.object.parent.name);
+                        // this.scene.remove(intersect.object.parent);
 
-                        this.objects.splice(this.objects.indexOf(intersect.object), 1);
-                        this.removeObject$.next(intersect.object);
+                        // this.objects.splice(this.objects.indexOf(intersect.object), 1);
+                        this.removeObject$.next(intersect.object.parent);
                     }
                 }
 
                 // create cube
             } else {
                 const voxel = new Cube(this.dimensions);
+                // console.log(intersect);
 
                 if (intersect.face) {
-                    console.log(intersect);
+                    // console.log(intersect);
                     const vect3 = new THREE.Vector3()
                         .copy(intersect.point)
                         .add(intersect.face.normal);
@@ -210,39 +206,96 @@ export class UnitCreator {
                     const addZAxis = (this.dimensions.depth / 2) % 50;
                     console.log(addXAxis, addZAxis);
                     voxel.group.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
+                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
+                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
                     );
 
-                    this.scene.add(voxel.group);
+                    // this.scene.add(voxel.group);
                 }
 
-                this.addObject$.next(voxel.mesh);
-                this.objects.push(voxel.mesh);
+                this.addObject$.next(voxel.group);
+                // this.objects.push(voxel.mesh);
             }
         }
     }
 
-    private onDocumentKeyDown(event: any): void {
-        switch (event.keyCode) {
-            case 16:
-                this.isShiftDown = true;
-                console.log(this.isShiftDown);
-                break;
-        }
-    }
+    // private onPointerDown(event: any): void {
+    //     this.pointer.set(
+    //         (event.clientX / window.innerWidth) * 2 - 1,
+    //         -(event.clientY / window.innerHeight) * 2 + 1,
+    //     );
 
-    private onDocumentKeyUp(event: any): void {
-        switch (event.keyCode) {
-            case 16:
-                this.isShiftDown = false;
+    //     this.raycaster.setFromCamera(this.pointer, this.camera);
 
-                break;
-        }
-    }
+    //     const intersects = this.raycaster.intersectObjects(this.objects, false);
+
+    //     if (intersects.length > 0) {
+    //         const intersect = intersects[0];
+
+    //         // delete cube
+
+    //         if (this.isShiftDown) {
+    //             console.log("SHIFT IS DOWN");
+
+    //             if (intersect.object.name !== "plane") {
+    //                 if (intersect.object.parent && intersect.object.parent.name === "cube") {
+    //                     this.scene.remove(intersect.object.parent);
+
+    //                     this.objects.splice(this.objects.indexOf(intersect.object), 1);
+    //                     this.removeObject$.next(intersect.object);
+    //                 }
+    //             }
+
+    //             // create cube
+    //         } else {
+    //             const voxel = new Cube(this.dimensions);
+
+    //             if (intersect.face) {
+    //                 console.log(intersect);
+    //                 const vect3 = new THREE.Vector3()
+    //                     .copy(intersect.point)
+    //                     .add(intersect.face.normal);
+    //                 vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+
+    //                 const addXAxis = (this.dimensions.width / 2) % 50;
+    //                 const addZAxis = (this.dimensions.depth / 2) % 50;
+    //                 console.log(addXAxis, addZAxis);
+    //                 voxel.group.position.set(
+    //                     vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25 + addXAxis,
+    //                     vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
+    //                     vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25 + addZAxis,
+    //                 );
+
+    //                 this.scene.add(voxel.group);
+    //             }
+
+    //             this.addObject$.next(voxel.mesh);
+    //             this.objects.push(voxel.mesh);
+    //         }
+    //     }
+    // }
+
+    // private onDocumentKeyDown(event: any): void {
+    //     switch (event.keyCode) {
+    //         case 16:
+    //             this.isShiftDown = true;
+    //             console.log(this.isShiftDown);
+    //             break;
+    //     }
+    // }
+
+    // private onDocumentKeyUp(event: any): void {
+    //     switch (event.keyCode) {
+    //         case 16:
+    //             this.isShiftDown = false;
+
+    //             break;
+    //     }
+    // }
 
     public swapOrientation(): void {
+        console.log("SWAPPING");
         this.dimensions = {
             width: this.dimensions.depth,
             depth: this.dimensions.width,
@@ -258,13 +311,13 @@ export class UnitCreator {
             opacity: 0.5,
             transparent: true,
         });
-        this.scene.remove(this.rollOverMesh);
+        this.removeObject$.next(this.rollOverMesh);
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
-        this.scene.add(this.rollOverMesh);
+        this.addObject$.next(this.rollOverMesh);
     }
 
-    public removeObjects(objects: THREE.Object3D[]): void {
-        this.objects = this.objects.filter((obj) => !objects.includes(obj));
-        objects.forEach((obj) => this.scene.remove(obj));
-    }
+    // public removeObjects(objects: THREE.Object3D[]): void {
+    //     this.objects = this.objects.filter((obj) => !objects.includes(obj));
+    //     objects.forEach((obj) => this.scene.remove(obj));
+    // }
 }
