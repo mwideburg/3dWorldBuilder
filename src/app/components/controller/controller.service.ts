@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import * as THREE from "three";
 import { UnitCreator } from "../interaction/unitCreator";
-import { Orbit } from "../interaction/orbit";
+// import { Orbit } from "../interaction/orbit";
 import { DragAndDrop } from "../interaction/dragAndDrop";
 import { Subject } from "rxjs";
 import { Dimension } from "../types/dimensionType";
@@ -13,15 +13,9 @@ import { ObjectManager } from "../objectService/objectManager";
     providedIn: "root",
 })
 export class ControllerService {
-    scene!: THREE.Scene;
-
     camera!: THREE.PerspectiveCamera;
 
     renderer!: THREE.WebGLRenderer;
-
-    objects!: THREE.Object3D[];
-
-    currentController!: InteractionService;
 
     unitCreator!: UnitCreator;
 
@@ -32,22 +26,18 @@ export class ControllerService {
     selectedUnitData$: Subject<{ name: string; attributes: string[]; unit: THREE.Object3D }> =
         new Subject();
 
+    requestAnimation$: Subject<boolean> = new Subject();
+
     constructor(
-        private interactionService: InteractionService,
+        public interactionService: InteractionService,
         private objectManager: ObjectManager,
     ) {}
 
-    public createController(
-        camera: THREE.PerspectiveCamera,
-        objects: THREE.Object3D[],
-        renderer: THREE.WebGLRenderer,
-        scene: THREE.Scene,
-    ): void {
-        this.scene = scene;
+    public createController(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
         this.renderer = renderer;
         this.camera = camera;
         // this.objects = objects;
-        this.unitCreator = new UnitCreator(this.camera, this.objectManager.objects, this.scene);
+        this.unitCreator = new UnitCreator(this.camera);
         console.log(this.objectManager);
 
         // this.dragAndDrop = new DragAndDrop(
@@ -58,6 +48,7 @@ export class ControllerService {
 
         //     // this.renderer,
         // );
+        this.currentController$.next("unitCreator");
         this.interactionService.createInteractions(this.renderer.domElement, this.camera);
         this.interactionService.click$.subscribe((isShiftDown: boolean) => {
             console.log(isShiftDown);
@@ -72,8 +63,9 @@ export class ControllerService {
                 this.interactionService.raycaster,
                 this.objectManager.objects,
             );
+            this.requestAnimation$.next(true);
         });
-        this.currentController = this.interactionService;
+
         // this.controlSwitch = this.controlSwitch.bind(this);
         // this.hotKeyControlSwitch = this.hotKeyControlSwitch.bind(this);
         // document.addEventListener("keydown", this.hotKeyControlSwitch);
@@ -93,17 +85,17 @@ export class ControllerService {
         this.unitCreator.setDimensions(dimensions);
     }
 
-    public setName(name: string): void {
-        // if (this.currentController instanceof Orbit && this.currentController.selectedObject) {
-        //     this.currentController.setName(name);
-        // }
-    }
+    // public setName(name: string): void {
+    //     if (this.currentController instanceof Orbit && this.currentController.selectedObject) {
+    //         this.currentController.setName(name);
+    //     }
+    // }
 
-    public changeLevel(level: number): void {
-        // if (this.currentController instanceof Orbit && this.currentController.selectedObject) {
-        //     this.currentController.changeLevel(level);
-        // }
-    }
+    // public changeLevel(level: number): void {
+    //     if (this.currentController instanceof Orbit && this.currentController.selectedObject) {
+    //         this.currentController.changeLevel(level);
+    //     }
+    // }
 
     public changeGroupLevel(level: number): void {
         // console.log(level);
@@ -129,103 +121,106 @@ export class ControllerService {
         // this.unitCreator.objects = units;
     }
 
-    private hotKeyControlSwitch(event: any): void {
-        // console.log(event.keyCode);
-        // switch (event.keyCode) {
-        //     case 79:
-        //         if (this.currentController instanceof Orbit) {
-        //             return;
-        //         }
-        //         if (this.currentController instanceof DragAndDrop) {
-        //             this.currentController.disposeTemp();
-        //         } else {
-        //             this.currentController.dispose();
-        //         }
-        //         this.currentController = new Orbit(
-        //             this.camera,
-        //             this.renderer,
-        //             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
-        //         );
-        //         this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
-        //             if (data.name) {
-        //                 // console.log("CONTROLLER", data.name);
-        //                 this.selectedUnitData$.next({
-        //                     name: data.name,
-        //                     attributes: [],
-        //                     unit: data,
-        //                 });
-        //             }
-        //         });
-        //         this.currentController$.next("orbit");
-        //         break;
-        //     case 85:
-        //         this.currentController.dispose();
-        //         this.currentController = this.unitCreator;
-        //         this.unitCreator.activate();
-        //         this.currentController$.next("unitCreator");
-        //         break;
-        //     case 71:
-        //         this.currentController.dispose();
-        //         this.currentController = this.dragAndDrop;
-        //         this.dragAndDrop.activate(
-        //             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
-        //             this.unitCreator.objects.filter((obj) => obj.name === "plane"),
-        //         );
-        //         this.dragAndDrop.addObject$.subscribe((object: THREE.Object3D) => {
-        //             this.unitCreator.objects.push(object);
-        //         });
-        //         this.currentController$.next("dragAndDrop");
-        //         break;
-        //     default:
-        //         break;
-        // }
-    }
+    // private hotKeyControlSwitch(event: any): void {
+    //     console.log(event.keyCode);
 
-    public controlSwitch(type: number): void {
-        // switch (type) {
-        //     case 1:
-        //         if (this.currentController instanceof DragAndDrop) {
-        //             this.currentController.disposeTemp();
-        //         } else {
-        //             this.currentController.dispose();
-        //         }
-        //         this.currentController = new Orbit(
-        //             this.camera,
-        //             this.renderer,
-        //             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
-        //         );
-        //         this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
-        //             if (data.name) {
-        //                 // console.log("CONTROLLER", data.name);
-        //                 this.selectedUnitData$.next({
-        //                     name: data.name,
-        //                     attributes: [],
-        //                     unit: data,
-        //                 });
-        //             }
-        //         });
-        //         this.currentController$.next("orbit");
-        //         break;
-        //     case 2:
-        //         this.currentController.dispose();
-        //         this.currentController = this.unitCreator;
-        //         this.unitCreator.activate();
-        //         this.currentController$.next("unitCreator");
-        //         break;
-        //     case 3:
-        //         this.currentController.dispose();
-        //         this.currentController = this.dragAndDrop;
-        //         this.dragAndDrop.activate(
-        //             this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
-        //             this.unitCreator.objects.filter((obj) => obj.name === "plane"),
-        //         );
-        //         this.dragAndDrop.addObject$.subscribe((object: THREE.Object3D) => {
-        //             this.unitCreator.objects.push(object);
-        //         });
-        //         this.currentController$.next("dragAndDrop");
-        //         break;
-        //     default:
-        //         break;
-        // }
-    }
+    //     switch (event.keyCode) {
+    //         case 79:
+    //             if (this.currentController instanceof Orbit) {
+    //                 return;
+    //             }
+
+    //             if (this.currentController instanceof DragAndDrop) {
+    //                 this.currentController.disposeTemp();
+    //             } else {
+    //                 this.currentController.dispose();
+    //             }
+
+    //             this.currentController = new Orbit(
+    //                 this.camera,
+    //                 this.renderer,
+    //                 this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+    //             );
+    //             this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
+    //                 if (data.name) {
+    //                     // console.log("CONTROLLER", data.name);
+    //                     this.selectedUnitData$.next({
+    //                         name: data.name,
+    //                         attributes: [],
+    //                         unit: data,
+    //                     });
+    //                 }
+    //             });
+    //             this.currentController$.next("orbit");
+    //             break;
+    //         case 85:
+    //             this.currentController.dispose();
+    //             this.currentController = this.unitCreator;
+    //             this.unitCreator.activate();
+    //             this.currentController$.next("unitCreator");
+    //             break;
+    //         case 71:
+    //             this.currentController.dispose();
+    //             this.currentController = this.dragAndDrop;
+    //             this.dragAndDrop.activate(
+    //                 this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+    //                 this.unitCreator.objects.filter((obj) => obj.name === "plane"),
+    //             );
+    //             this.dragAndDrop.addObject$.subscribe((object: THREE.Object3D) => {
+    //                 this.unitCreator.objects.push(object);
+    //             });
+    //             this.currentController$.next("dragAndDrop");
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
+
+    // public controlSwitch(type: number): void {
+    //     switch (type) {
+    //         case 1:
+    //             if (this.currentController instanceof DragAndDrop) {
+    //                 this.currentController.disposeTemp();
+    //             } else {
+    //                 this.currentController.dispose();
+    //             }
+    //             this.currentController = new Orbit(
+    //                 this.camera,
+    //                 this.renderer,
+    //                 this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+    //             );
+    //             this.currentController.selectedObject$.subscribe((data: THREE.Object3D) => {
+    //                 if (data.name) {
+    //                     // console.log("CONTROLLER", data.name);
+    //                     this.selectedUnitData$.next({
+    //                         name: data.name,
+    //                         attributes: [],
+    //                         unit: data,
+    //                     });
+    //                 }
+    //             });
+    //             this.currentController$.next("orbit");
+    //             break;
+    //         case 2:
+    //             this.currentController.dispose();
+    //             this.currentController = this.unitCreator;
+    //             this.unitCreator.activate();
+    //             this.currentController$.next("unitCreator");
+    //             break;
+    //         case 3:
+    //             this.currentController.dispose();
+    //             this.currentController = this.dragAndDrop;
+    //             this.dragAndDrop.activate(
+    //                 this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
+    //                 this.unitCreator.objects.filter((obj) => obj.name === "plane"),
+    //             );
+    //             this.dragAndDrop.addObject$.subscribe((object: THREE.Object3D) => {
+    //                 this.unitCreator.objects.push(object);
+    //             });
+    //             this.currentController$.next("dragAndDrop");
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
 }

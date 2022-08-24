@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 
 import { ControllerService } from "../controller/controller.service";
 import { FormBuilder } from "@angular/forms";
-import { UnitCreator } from "../interaction/unitCreator";
+// import { UnitCreator } from "../interaction/unitCreator";
 // import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: "app-side-panel",
@@ -61,7 +61,8 @@ export class SidePanelComponent implements OnInit {
     }
 
     public controlSwitch(type: number): void {
-        this.controllerService.controlSwitch(type);
+        console.log(type);
+        // this.controllerService.controlSwitch(type);
     }
 
     public setWidth(event: Event): void {
@@ -86,16 +87,16 @@ export class SidePanelComponent implements OnInit {
         // Process checkout data here
         this.unitIsSelected = false;
         console.log("Naming unit", this.unitAttributes);
-        this.controllerService.setName(this.unitAttributes.value.name);
+        // this.controllerService.setName(this.unitAttributes.value.name);
         this.unitName = this.unitAttributes.value.name;
         this.unitAttributes.reset();
     }
 
     public changeLevel(level: number): void {
         this.unitIsSelected = false;
-        console.log("Change Level of unit", this.unitAttributes);
+        console.log("Change Level of unit", level);
 
-        this.controllerService.changeLevel(Number(level));
+        // this.controllerService.changeLevel(Number(level));
     }
 
     public changeGroupLevel(level: number): void {

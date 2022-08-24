@@ -4,7 +4,6 @@ import * as THREE from "three";
 
 import { Injectable, NgZone } from "@angular/core";
 import { ControllerService } from "../controller/controller.service";
-import { InteractionService } from "../interaction/interactionService";
 
 @Injectable({ providedIn: "root" })
 export class RenderEngine {
@@ -18,6 +17,8 @@ export class RenderEngine {
 
     controllerService!: ControllerService;
 
+    requestAnimation: boolean = false;
+
     constructor(private ngZone: NgZone) {
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -29,9 +30,11 @@ export class RenderEngine {
 
         this.renderer = renderer;
         this.canvas = this.renderer.domElement;
+        // this.render = this.render.bind(this);
+        // this.onWindowResize = this.onWindowResize.bind(this);
+        // window.addEventListener("resize", this.onWindowResize);
         this.render = this.render.bind(this);
-        this.onWindowResize = this.onWindowResize.bind(this);
-        window.addEventListener("resize", this.onWindowResize);
+        this.requestRenderIfNotRequested = this.requestRenderIfNotRequested.bind(this);
     }
 
     onInit(): void {}
@@ -52,20 +55,88 @@ export class RenderEngine {
 
     addControllerService(controllerService: ControllerService): void {
         this.controllerService = controllerService;
-    }
 
-    render(): void {
-        requestAnimationFrame(this.render);
-
-        if (
-            this.controllerService &&
-            this.controllerService.currentController instanceof InteractionService &&
-            this.controllerService.currentController.controls
-        ) {
-            this.controllerService.currentController.controls.update();
+        if (this.controllerService.interactionService.controls) {
+            // this.controllerService.interactionService.controls.update();
+            this.controllerService.interactionService.controls.addEventListener(
+                "change",
+                this.requestRenderIfNotRequested,
+            );
         }
 
-        this.renderer.render(this.scene, this.camera);
+        this.animate();
+        this.requestRenderIfNotRequested();
+    }
+
+    // render(): void {
+    //     requestAnimationFrame(this.render);
+
+    //     if (this.controllerService.interactionService.controls) {
+    //         this.controllerService.interactionService.controls.update();
+    //     }
+
+    //     this.renderer.render(this.scene, this.camera);
+    // }
+
+    public animate(): void {
+        // We have to run this outside angular zones,
+        // because it could trigger heavy changeDetection cycles.
+        this.ngZone.runOutsideAngular(() => {
+            if (document.readyState !== "loading") {
+                this.render();
+            } else {
+                window.addEventListener("DOMContentLoaded", () => {
+                    this.render();
+                });
+            }
+
+            if (this.controllerService.interactionService.controls) {
+                // this.controllerService.interactionService.controls.update();
+                this.controllerService.interactionService.controls.addEventListener(
+                    "change",
+                    this.requestRenderIfNotRequested,
+                );
+            }
+
+            window.addEventListener("resize", () => {
+                this.resize();
+            });
+        });
+    }
+
+    public render(): void {
+        this.requestAnimation = false;
+
+        if (this.controllerService.interactionService.controls) {
+            this.controllerService.interactionService.controls.update();
+        }
+
+        this.camera.updateProjectionMatrix();
+
+        this.renderer?.render(this.scene, this.camera);
+    }
+
+    public requestRenderIfNotRequested(): void {
+        // console.log("REQUEST");
+
+        if (!this.requestAnimation && this.renderer) {
+            this.requestAnimation = true;
+            requestAnimationFrame(this.render);
+        }
+    }
+
+    public resize(): void {
+        const element = this.canvas;
+
+        if (this.scene && this.renderer && this.camera && element) {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(width, height);
+        }
+
+        this.requestRenderIfNotRequested();
     }
 
     onWindowResize(): void {

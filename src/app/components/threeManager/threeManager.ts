@@ -35,21 +35,22 @@ export class ThreeManager {
         this.scene.add(plane);
         this.objectManager.objects.push(plane);
         this.renderEngine.createRenderEngine(this.scene, this.camera);
-        this.controllerService.createController(
-            this.camera,
-            this.objectManager.objects,
-            this.renderEngine.renderer,
-            this.scene,
-        );
-
+        this.controllerService.createController(this.camera, this.renderEngine.renderer);
+        this.scene.add(this.controllerService.unitCreator.rollOverMesh);
+        this.renderEngine.addControllerService(this.controllerService);
         this.controllerService.unitCreator.addObject$.subscribe((object: THREE.Object3D) => {
             this.objectManager.addCubeObject(object);
             this.scene.add(object);
+            this.renderEngine.requestRenderIfNotRequested();
         });
         this.controllerService.unitCreator.removeObject$.subscribe((object: THREE.Object3D) => {
             this.objectManager.removeCubeObject(object);
             this.scene.remove(object);
+            this.renderEngine.requestRenderIfNotRequested();
         });
-        this.renderEngine.addControllerService(this.controllerService);
+
+        this.controllerService.requestAnimation$.subscribe(() => {
+            this.renderEngine.requestRenderIfNotRequested();
+        });
     }
 }

@@ -11,27 +11,22 @@ export class UnitCreator {
 
     rollOverMesh: THREE.Mesh;
 
-    objects: THREE.Object3D[];
-
     addObject$: Subject<THREE.Object3D> = new Subject();
 
     removeObject$: Subject<THREE.Object3D> = new Subject();
-
-    scene: THREE.Scene;
 
     // isShiftDown: boolean = false;
 
     dimensions: Dimension;
 
-    constructor(camera: THREE.PerspectiveCamera, objects: THREE.Object3D[], scene: THREE.Scene) {
+    constructor(camera: THREE.PerspectiveCamera) {
         this.dimensions = {
             width: 100,
             height: 100,
             depth: 100,
         };
         this.camera = camera;
-        this.objects = objects;
-        this.scene = scene;
+
         const renderDiv = document.getElementById("renderDiv");
 
         if (renderDiv) {
@@ -59,7 +54,7 @@ export class UnitCreator {
 
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
         this.rollOverMesh.name = "rollOverMesh";
-        this.scene.add(this.rollOverMesh);
+        this.addObject$.next(this.rollOverMesh);
     }
 
     public activate(): void {
@@ -86,7 +81,6 @@ export class UnitCreator {
         });
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
         this.rollOverMesh.name = "rollOverMesh";
-        this.scene.add(this.rollOverMesh);
     }
 
     public dispose(): void {
@@ -101,11 +95,9 @@ export class UnitCreator {
         }
 
         // this.isShiftDown = false;
-        this.scene.remove(this.rollOverMesh);
     }
 
     public setDimensions(dimensions: Dimension): void {
-        this.scene.remove(this.rollOverMesh);
         console.log(dimensions);
         this.dimensions = dimensions;
         const rollOverGeo = new THREE.BoxGeometry(
@@ -118,8 +110,9 @@ export class UnitCreator {
             opacity: 0.5,
             transparent: true,
         });
+        this.removeObject$.next(this.rollOverMesh);
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
-        this.scene.add(this.rollOverMesh);
+        this.addObject$.next(this.rollOverMesh);
     }
 
     public onPointerMove(raycaster: THREE.Raycaster, objects: THREE.Object3D[]): void {
@@ -130,8 +123,8 @@ export class UnitCreator {
             const intersect = intersects[0];
 
             if (intersect.face) {
-                const addXAxis = (this.dimensions.width / 2) % 50;
-                const addZAxis = (this.dimensions.depth / 2) % 50;
+                // const addXAxis = (this.dimensions.width / 2) % 50;
+                // const addZAxis = (this.dimensions.depth / 2) % 50;
 
                 if (intersect.object.name === "plane") {
                     const vect3 = new THREE.Vector3()
@@ -139,7 +132,6 @@ export class UnitCreator {
                         .add(intersect.face.normal);
                     vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
                     // const faceHeight = intersect.object
-
                     this.rollOverMesh.position.set(
                         vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
@@ -148,17 +140,19 @@ export class UnitCreator {
                 }
 
                 if (intersect.object.name === "cube") {
-                    const vect3 = new THREE.Vector3()
-                        .copy(intersect.point)
-                        .add(intersect.face.normal);
-                    vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
-                    // const faceHeight = intersect.object
+                    if (intersect.face) {
+                        const vect3 = new THREE.Vector3()
+                            .copy(intersect.point)
+                            .add(intersect.face.normal);
+                        vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+                        // const faceHeight = intersect.object
 
-                    this.rollOverMesh.position.set(
-                        vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
-                        vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
-                        vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
-                    );
+                        this.rollOverMesh.position.set(
+                            vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
+                            vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,
+                            vect3.z + (Math.floor(this.dimensions.depth / 50) - 1) * 25,
+                        );
+                    }
                 }
             }
         }

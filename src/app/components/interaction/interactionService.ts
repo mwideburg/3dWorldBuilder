@@ -72,6 +72,7 @@ export class InteractionService {
 
         // AB 03/25/22 enable damping for more natual interaction
         this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.1;
 
         this.controls.zoomSpeed = 0.5;
 
@@ -138,8 +139,7 @@ export class InteractionService {
             pointerUp$.subscribe((up: any) => {
                 if (!this.isPinching) {
                     if (up.timeStamp - down.timeStamp < 150) {
-                        const intersect = this.click(down);
-
+                        // const intersect = this.click(down);
                         // if (intersect) {
                         //     this.click(intersect);
                         // } else {
