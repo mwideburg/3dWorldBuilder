@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 
 import { ControllerService } from "../controller/controller.service";
 import { FormBuilder } from "@angular/forms";
+// import { Subject } from "rxjs";
 // import { UnitCreator } from "../interaction/unitCreator";
 // import { MatButtonModule } from "@angular/material/button";
 @Component({
@@ -62,7 +63,7 @@ export class SidePanelComponent implements OnInit {
 
     public controlSwitch(type: number): void {
         console.log(type);
-        // this.controllerService.controlSwitch(type);
+        this.controllerService.controlSwitch(type);
     }
 
     public setWidth(event: Event): void {

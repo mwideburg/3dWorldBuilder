@@ -58,15 +58,15 @@ export class UnitCreator {
     }
 
     public activate(): void {
-        console.log("ACTIVATING");
-        const renderDiv = document.getElementById("renderDiv");
+        console.log("ACTIVATING CREATOR");
+        // const renderDiv = document.getElementById("renderDiv");
 
-        if (renderDiv) {
-            // renderDiv.addEventListener("pointermove", this.onPointerMove);
-            // renderDiv.addEventListener("pointerdown", this.onPointerDown);
-            // document.addEventListener("keydown", this.onDocumentKeyDown);
-            // document.addEventListener("keyup", this.onDocumentKeyUp);
-        }
+        // if (renderDiv) {
+        //     // renderDiv.addEventListener("pointermove", this.onPointerMove);
+        //     // renderDiv.addEventListener("pointerdown", this.onPointerDown);
+        //     // document.addEventListener("keydown", this.onDocumentKeyDown);
+        //     // document.addEventListener("keyup", this.onDocumentKeyUp);
+        // }
 
         // console.log(this.objects);
         const rollOverGeo = new THREE.BoxGeometry(
@@ -81,6 +81,11 @@ export class UnitCreator {
         });
         this.rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
         this.rollOverMesh.name = "rollOverMesh";
+        this.addObject$.next(this.rollOverMesh);
+    }
+
+    public disable(): void {
+        this.removeObject$.next(this.rollOverMesh);
     }
 
     public dispose(): void {

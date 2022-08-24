@@ -2,7 +2,7 @@
     <div style="display: flex; flex-direction: row;">
         
         <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-            <mat-button-toggle [class]="currentCotroller === 'orbit' ? 'selected' : 'not-selected'" (click)="controlSwitch(1)">Orbit Controls</mat-button-toggle>
+            <mat-button-toggle [class]="currentCotroller === 'orbit' ? 'selected' : 'not-selected'" (click)="controlSwitch(1)">Selector Controls</mat-button-toggle>
             <mat-button-toggle [class]="currentCotroller === 'unitCreator' ? 'selected' : 'not-selected'" (click)="controlSwitch(2)">Unit Creator</mat-button-toggle>
             <mat-button-toggle [class]="currentCotroller === 'dragAndDrop' ? 'selected' : 'not-selected'"(click)="controlSwitch(3)">Group</mat-button-toggle>
         </mat-button-toggle-group>
@@ -79,7 +79,7 @@
         </div>
         
     </div>
-    <div *ngIf="currentCotroller === 'dragAndDrop'" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(150, 150, 150, 0.695);">
+    <div *ngIf="currentCotroller === 'selector'" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(150, 150, 150, 0.695);">
         Change Level:
         <div>
             <button mat-raised-button (click)="changeGroupLevel(1)" color="primary">+</button>

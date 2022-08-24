@@ -49,7 +49,49 @@ export class ThreeManager {
             this.renderEngine.requestRenderIfNotRequested();
         });
 
+        this.controllerService.selector.attachObjectToSelectedGroup$.subscribe(
+            (object: THREE.Object3D) => {
+                if (this.objectManager.selectedGroup.children.includes(object)) {
+                    this.objectManager.removeUnitFromSelectedGroup(object);
+                    console.log("ATACHING");
+                } else {
+                    this.objectManager.addUnitToSelectedGroup(object);
+                }
+            },
+        );
+        this.controllerService.selector.attachObjectToScene$.subscribe((object: THREE.Object3D) => {
+            console.log("ATACHING");
+            this.objectManager.removeUnitFromSelectedGroup(object);
+        });
         this.controllerService.requestAnimation$.subscribe(() => {
+            this.renderEngine.requestRenderIfNotRequested();
+        });
+
+        this.scene.add(this.objectManager.selectedGroup);
+        this.controllerService.currentController$.subscribe((type: string) => {
+            switch (type) {
+                case "selector":
+                    this.objectManager.recolorSelectedGroup();
+                    this.controllerService.selector.activate();
+
+                    break;
+                case "unitCreator":
+                    this.objectManager.recolorOriginalObjects();
+                    this.controllerService.unitCreator.activate();
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        this.objectManager.attachObjectToScene$.subscribe((object: THREE.Object3D) => {
+            this.scene.attach(object);
+        });
+        this.objectManager.addToScene$.subscribe((object: THREE.Object3D) => {
+            this.scene.add(object);
+        });
+        this.controllerService.combineUnits$.subscribe(() => {
+            this.objectManager.combineUnitsIntoOne();
             this.renderEngine.requestRenderIfNotRequested();
         });
     }

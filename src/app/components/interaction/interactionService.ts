@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import * as THREE from "three";
 import { ObjectManager } from "../objectService/objectManager";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { fromEvent, Subject } from "rxjs";
+import { bufferTime, distinctUntilChanged, filter, fromEvent, map, Subject } from "rxjs";
 // idle camera
 // header interactions
 // remove black material on boats
@@ -33,6 +33,12 @@ export class InteractionService {
     pointerMove$: Subject<boolean> = new Subject();
 
     isShiftDown: boolean = false;
+
+    commandIsDown: boolean = false;
+
+    dblClicked$: Subject<boolean> = new Subject();
+
+    dblClicked: boolean = false;
 
     constructor(public objectService: ObjectManager) {
         const width = window.innerWidth;
@@ -107,6 +113,15 @@ export class InteractionService {
         const pointerUp$ = fromEvent(nativeElement, "pointerup");
         const pointerDown$ = fromEvent(nativeElement, "pointerdown");
         const pointerMove$ = fromEvent(nativeElement, "pointermove");
+        const doubleClick$ = pointerUp$.pipe(
+            map((event: Event) => [Date.now(), event]),
+            // In a 250ms window, check for 2 entries in the buffer every 50ms
+            bufferTime(250, 50, 2),
+            // filter out buffers where there are 2 entries (for double click)
+            filter((l) => l.length === 2),
+            // ensure the two timestamps are different
+            distinctUntilChanged((a, b) => a[0] == b[0] && a[1] == b[1]),
+        );
         pointerDown$.subscribe((ev: any) => {
             this.evCache.push(ev);
 
@@ -137,8 +152,8 @@ export class InteractionService {
         // ----------------------------------------------------------------------
         pointerDown$.subscribe((down: any) => {
             pointerUp$.subscribe((up: any) => {
-                if (!this.isPinching) {
-                    if (up.timeStamp - down.timeStamp < 150) {
+                if (!this.isPinching && !this.dblClicked) {
+                    if (up.timeStamp - down.timeStamp < 150 && !this.dblClicked) {
                         // const intersect = this.click(down);
                         // if (intersect) {
                         //     this.click(intersect);
@@ -146,6 +161,11 @@ export class InteractionService {
                         //     this.objectService.removeHover();
                         //     this.hoverSummaryService.hide();
                         // }
+                        this.click(down);
+                    }
+                } else {
+                    if (up.timeStamp - down.timeStamp < 150 && this.dblClicked) {
+                        this.dblClick(down);
                     }
                 }
 
@@ -157,15 +177,26 @@ export class InteractionService {
         pointerMove$.subscribe((event: any) => {
             this.pointerMove(event);
         });
+
+        doubleClick$.subscribe((event: any) => {
+            this.dblClicked = true;
+            this.dblClick(event[0][1]);
+
+            if (!this.isPinching) {
+                // console.log("Double tap", event);
+            }
+        });
     }
 
     private onDocumentKeyDown(event: any): void {
-        // console.log("KEYDOWN");
-
         switch (event.keyCode) {
             case 16:
                 this.isShiftDown = true;
                 console.log(this.isShiftDown);
+                break;
+            case 91:
+                this.commandIsDown = true;
+                // console.log(this.isShiftDown);
                 break;
         }
     }
@@ -175,6 +206,10 @@ export class InteractionService {
             case 16:
                 this.isShiftDown = false;
 
+                break;
+            case 91:
+                this.commandIsDown = false;
+                // console.log(this.isShiftDown);
                 break;
         }
     }
@@ -195,5 +230,13 @@ export class InteractionService {
         this.raycaster.setFromCamera(this.mouse, this.camera);
         // const intersects = this.raycaster.intersectObjects(this.objectService.objects);
         this.click$.next(this.isShiftDown);
+    }
+
+    private dblClick(event: MouseEvent): void {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        this.dblClicked$.next(true);
+        this.dblClicked = false;
     }
 }
