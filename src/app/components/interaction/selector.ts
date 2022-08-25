@@ -23,13 +23,15 @@ export class Selector {
 
     addObject$: Subject<THREE.Object3D> = new Subject();
 
+    createCopyGroup$: Subject<boolean> = new Subject();
+
     attachObjectToSelectedGroup$: Subject<THREE.Object3D> = new Subject();
 
     attachObjectToScene$: Subject<THREE.Object3D> = new Subject();
 
     combinedUnits$: Subject<{ add: Cube; remove: THREE.Object3D[] }> = new Subject();
 
-    requsteAnimation$: Subject<boolean> = new Subject();
+    // requestAnimation$: Subject<boolean> = new Subject();
 
     constructor(camera: THREE.PerspectiveCamera) {
         // this.renderer = renderer;
@@ -83,46 +85,40 @@ export class Selector {
     public onPointerMove(
         raycaster: THREE.Raycaster,
         plane: THREE.Object3D[],
-        moveIsEnabled: boolean,
-        shiftIsDown: boolean,
+        isCopying: boolean,
+        rollOverMeshGroup: THREE.Group,
     ): void {
         const intersects = raycaster.intersectObjects(plane, false);
 
         if (
             intersects.length > 0 &&
-            this.isCopying &&
-            this.rollOverCopyMeshGroup.children[0] instanceof THREE.Mesh
+            isCopying &&
+            rollOverMeshGroup.children[0] instanceof THREE.Mesh
         ) {
             const intersect = intersects[0];
 
             if (intersect.face) {
-                const original = new THREE.Vector3().copy(
-                    this.rollOverCopyMeshGroup.children[0].position,
-                );
+                const original = new THREE.Vector3().copy(rollOverMeshGroup.children[0].position);
                 const vect3 = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
                 vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
                 // const faceHeight = intersect.object
 
-                this.rollOverCopyMeshGroup.children[0].position.set(
+                rollOverMeshGroup.children[0].position.set(
                     vect3.x +
-                        (Math.floor(
-                            this.rollOverCopyMeshGroup.children[0].geometry.parameters.width / 50,
-                        ) -
+                        (Math.floor(rollOverMeshGroup.children[0].geometry.parameters.width / 50) -
                             1) *
                             25,
-                    this.rollOverCopyMeshGroup.children[0].position.y,
+                    rollOverMeshGroup.children[0].position.y,
                     vect3.z +
-                        (Math.floor(
-                            this.rollOverCopyMeshGroup.children[0].geometry.parameters.depth / 50,
-                        ) -
+                        (Math.floor(rollOverMeshGroup.children[0].geometry.parameters.depth / 50) -
                             1) *
                             25,
                 );
 
-                const moveX = this.rollOverCopyMeshGroup.children[0].position.x - original.x;
-                const moveZ = this.rollOverCopyMeshGroup.children[0].position.z - original.z;
-                this.rollOverCopyMeshGroup.children.forEach((voxel) => {
-                    if (voxel !== this.rollOverCopyMeshGroup.children[0]) {
+                const moveX = rollOverMeshGroup.children[0].position.x - original.x;
+                const moveZ = rollOverMeshGroup.children[0].position.z - original.z;
+                rollOverMeshGroup.children.forEach((voxel) => {
+                    if (voxel !== rollOverMeshGroup.children[0]) {
                         voxel.position.x += moveX;
                         voxel.position.z += moveZ;
                     }
@@ -300,23 +296,8 @@ export class Selector {
             }
         }
 
-        if (isCopying && this.rollOverCopyMeshGroup.children.length > 0) {
-            console.log("CLICK COPYING");
-
-            this.rollOverCopyMeshGroup.children.forEach((child: any) => {
-                const cube = new Cube({
-                    width: child.geometry.parameters.width,
-                    height: child.geometry.parameters.height,
-                    depth: child.geometry.parameters.depth,
-                });
-
-                cube.group.position.set(child.position.x, child.position.y, child.position.z);
-                // this.objects.push(cube.mesh);
-                this.addObject$.next(cube.group);
-
-                // this.scene.add(cube.group);
-            });
-            this.rollOverCopyMeshGroup.clear();
+        if (isCopying) {
+            this.createCopyGroup$.next(true);
         }
     }
 

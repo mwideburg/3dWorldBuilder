@@ -16,10 +16,14 @@ export class ObjectManager {
 
     attachObjectToScene$: Subject<THREE.Object3D> = new Subject();
 
+    isCopying: boolean = false;
+
     selectedGroup: THREE.Group = new THREE.Group();
 
+    rollOverGroup: THREE.Group = new THREE.Group();
+
     // constructor(scene: THREE.Scene) {
-    //     this.scene = scene;
+    //     this.addToScene$.next(this.rollOverGroup);
     // }
 
     public addMeshToObjects(mesh: THREE.Mesh): void {
@@ -126,8 +130,6 @@ export class ObjectManager {
         const cube = new Cube(dims);
         const position = new THREE.Vector3().add(positions[0]).add(positions[1]).divideScalar(2);
         cube.group.position.set(position.x, position.y, position.z);
-        console.log("Objects BEFORE", this.objects);
-        console.log("Meshes", meshes);
         console.log(this.objects);
         this.objects = this.objects.filter((obj) => {
             return !meshes.includes(obj);
@@ -135,9 +137,49 @@ export class ObjectManager {
 
         this.objects.push(cube.mesh);
         this.addToScene$.next(cube.group);
-        console.log("OBJECTs", this.objects);
         this.selectedGroup.clear();
+    }
 
-        console.log("COMBINE UNITS");
+    public addRollOverGroup(): void {
+        this.selectedGroup.children.forEach((child: any) => {
+            child.children.forEach((mesh: any) => {
+                if (mesh.name === "cube") {
+                    const rollOverGeo = new THREE.BoxGeometry(
+                        mesh.geometry.parameters.width,
+                        mesh.geometry.parameters.height,
+                        mesh.geometry.parameters.depth,
+                    );
+                    const rollOverMaterial = new THREE.MeshBasicMaterial({
+                        color: 0xff0000,
+                        opacity: 0.5,
+                        transparent: true,
+                    });
+
+                    const rollOverMesh = new THREE.Mesh(rollOverGeo, rollOverMaterial);
+                    rollOverMesh.position.set(child.position.x, child.position.y, child.position.z);
+                    this.rollOverGroup.add(rollOverMesh);
+                }
+            });
+        });
+        this.isCopying = true;
+        this.addToScene$.next(this.rollOverGroup);
+        // this.scene.add(this.rollOverCopyMeshGroup);
+        console.log("COPYING UNITS");
+    }
+
+    public createCopyGroup(): void {
+        this.rollOverGroup.children.forEach((child: any) => {
+            const cube = new Cube({
+                width: child.geometry.parameters.width,
+                height: child.geometry.parameters.height,
+                depth: child.geometry.parameters.depth,
+            });
+
+            cube.group.position.set(child.position.x, child.position.y, child.position.z);
+            this.addCubeObject(cube.group);
+            this.addToScene$.next(cube.group);
+        });
+        this.rollOverGroup.clear();
+        this.isCopying = false;
     }
 }

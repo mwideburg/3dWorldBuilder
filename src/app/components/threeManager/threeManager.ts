@@ -37,6 +37,7 @@ export class ThreeManager {
         this.renderEngine.createRenderEngine(this.scene, this.camera);
         this.controllerService.createController(this.camera, this.renderEngine.renderer);
         this.scene.add(this.controllerService.unitCreator.rollOverMesh);
+
         this.renderEngine.addControllerService(this.controllerService);
         this.controllerService.unitCreator.addObject$.subscribe((object: THREE.Object3D) => {
             this.objectManager.addCubeObject(object);
@@ -63,9 +64,9 @@ export class ThreeManager {
             console.log("ATACHING");
             this.objectManager.removeUnitFromSelectedGroup(object);
         });
-        this.controllerService.selector.requsteAnimation$.subscribe(() => {
-            this.renderEngine.requestRenderIfNotRequested();
-        });
+        // this.controllerService.selector.requestAnimation$.subscribe(() => {
+        //     this.renderEngine.requestRenderIfNotRequested();
+        // });
         this.controllerService.requestAnimation$.subscribe(() => {
             this.renderEngine.requestRenderIfNotRequested();
         });
@@ -96,6 +97,10 @@ export class ThreeManager {
         this.controllerService.combineUnits$.subscribe(() => {
             this.objectManager.combineUnitsIntoOne();
             this.renderEngine.requestRenderIfNotRequested();
+        });
+
+        this.controllerService.selector.createCopyGroup$.subscribe(() => {
+            this.objectManager.createCopyGroup();
         });
     }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 
 import { ControllerService } from "../controller/controller.service";
 import { FormBuilder } from "@angular/forms";
+import { ObjectManager } from "../objectService/objectManager";
 // import { Subject } from "rxjs";
 // import { UnitCreator } from "../interaction/unitCreator";
 // import { MatButtonModule } from "@angular/material/button";
@@ -29,7 +30,11 @@ export class SidePanelComponent implements OnInit {
 
     unitLevel: number = 1;
 
-    constructor(public controllerService: ControllerService, private formBuilder: FormBuilder) {
+    constructor(
+        public controllerService: ControllerService,
+        private formBuilder: FormBuilder,
+        public objectManager: ObjectManager,
+    ) {
         this.controllerService.currentController$.subscribe((controller) => {
             this.currentCotroller = controller;
 
@@ -118,7 +123,7 @@ export class SidePanelComponent implements OnInit {
     }
 
     public copyGroupOfUnits(): void {
-        this.controllerService.copyGroupOfUnits();
+        this.objectManager.addRollOverGroup();
     }
 
     public deselectAll(): void {

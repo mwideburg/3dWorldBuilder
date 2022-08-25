@@ -69,7 +69,7 @@ export class ControllerService {
                     this.selector.onPointerDown(
                         this.interactionService.raycaster,
                         this.objectManager.objects,
-                        false,
+                        this.objectManager.isCopying,
                         isShiftDown,
                     );
                     break;
@@ -92,7 +92,7 @@ export class ControllerService {
             this.selector.onPointerDown(
                 this.interactionService.raycaster,
                 this.objectManager.objects,
-                false,
+                this.objectManager.isCopying,
                 false,
             );
         });
@@ -111,12 +111,15 @@ export class ControllerService {
                             this.objectManager.objects.filter((obj) => obj.name === "plane"),
                             this.objectManager.selectedGroup.children,
                         );
-                    } else {
+                    }
+
+                    if (this.objectManager.isCopying) {
+                        // console.log(this.objectManager.isCopying);
                         this.selector.onPointerMove(
                             this.interactionService.raycaster,
-                            this.objectManager.objects.filter((obj) => obj.name !== "plane"),
-                            false,
-                            false,
+                            this.objectManager.objects.filter((obj) => obj.name === "plane"),
+                            true,
+                            this.objectManager.rollOverGroup,
                         );
                     }
 
@@ -143,17 +146,6 @@ export class ControllerService {
                 // this.selector.removeObjectFromGroup(
                 //     this.interactionService.raycaster,
                 //     this.objectManager.objects,
-                // );
-            }
-        });
-
-        this.interactionService.moveObjects$.subscribe(() => {
-            if (this.currentController === "selector") {
-                // console.log(this.selector.unitSelected);
-                // this.selector.moveObjects(
-                //     this.interactionService.raycaster,
-                //     this.objectManager.objects.filter((obj) => obj.name !== "plane"),
-                //     this.objectManager.selectedGroup.children,
                 // );
             }
         });

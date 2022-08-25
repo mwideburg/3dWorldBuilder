@@ -32,8 +32,6 @@ export class InteractionService {
 
     pointerMove$: Subject<boolean> = new Subject();
 
-    moveObjects$: Subject<boolean> = new Subject();
-
     isShiftDown: boolean = false;
 
     commandIsDown: boolean = false;
@@ -253,15 +251,6 @@ export class InteractionService {
         // const intersects = this.raycaster.intersectObjects(this.objectService.objects);
 
         this.pointerMove$.next(true);
-    }
-
-    private moveObjects(event: MouseEvent): void {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-
-        this.moveObjects$.next(true);
     }
 
     private click(event: MouseEvent): void {
