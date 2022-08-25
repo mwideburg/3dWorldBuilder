@@ -14,7 +14,7 @@ import { bufferTime, distinctUntilChanged, filter, fromEvent, map, Subject } fro
 export class InteractionService {
     canvas!: HTMLCanvasElement;
 
-    controls: OrbitControls | undefined;
+    controls!: OrbitControls;
 
     raycaster: THREE.Raycaster;
 
@@ -22,7 +22,7 @@ export class InteractionService {
 
     camera: THREE.PerspectiveCamera;
 
-    domElement: HTMLElement | undefined;
+    domElement!: HTMLElement;
 
     isPinching: boolean = false;
 
@@ -32,6 +32,8 @@ export class InteractionService {
 
     pointerMove$: Subject<boolean> = new Subject();
 
+    moveObjects$: Subject<boolean> = new Subject();
+
     isShiftDown: boolean = false;
 
     commandIsDown: boolean = false;
@@ -39,6 +41,10 @@ export class InteractionService {
     dblClicked$: Subject<boolean> = new Subject();
 
     dblClicked: boolean = false;
+
+    pointerIsDown: boolean = false;
+
+    pointerIsDown$: Subject<boolean> = new Subject();
 
     constructor(public objectService: ObjectManager) {
         const width = window.innerWidth;
@@ -49,11 +55,12 @@ export class InteractionService {
 
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
-        this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
-        this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
+        // this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
+        // this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
+        // this.pointerMove = this.pointerMove.bind(this);
 
-        document.addEventListener("keydown", this.onDocumentKeyDown);
-        document.addEventListener("keyup", this.onDocumentKeyUp);
+        // document.addEventListener("keydown", this.onDocumentKeyDown);
+        // document.addEventListener("keyup", this.onDocumentKeyUp);
         // Listen to the idleService to determine if the user is idle
         // this.idleService.idle$.subscribe((isIdle: boolean) => {
         //     this.idleCamera$.next(isIdle);
@@ -98,6 +105,12 @@ export class InteractionService {
         // this.controls.minAzimuthAngle = -20
         // this.getLastPosition();
         this.establishPointerListeners();
+        this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
+        this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
+        this.pointerMove = this.pointerMove.bind(this);
+
+        document.addEventListener("keydown", this.onDocumentKeyDown);
+        document.addEventListener("keyup", this.onDocumentKeyUp);
         return this.controls;
     }
 
@@ -109,7 +122,7 @@ export class InteractionService {
         const nativeElement = this.domElement;
         // pointerup obervable
         // ----------------------------------------------------------------------
-        console.log("HELLO");
+        // console.log("HELLO");
         const pointerUp$ = fromEvent(nativeElement, "pointerup");
         const pointerDown$ = fromEvent(nativeElement, "pointerdown");
         const pointerMove$ = fromEvent(nativeElement, "pointermove");
@@ -129,6 +142,11 @@ export class InteractionService {
                 this.isPinching = true;
             }
 
+            if (this.commandIsDown) {
+                this.pointerIsDown$.next(true);
+            }
+
+            this.pointerIsDown = true;
             // console.log(this.evCache);
         });
         pointerUp$.subscribe((ev: any) => {
@@ -145,6 +163,7 @@ export class InteractionService {
                 }, 50);
             }
 
+            this.pointerIsDown = false;
             // console.log(this.evCache);
         });
 
@@ -175,7 +194,13 @@ export class InteractionService {
         });
 
         pointerMove$.subscribe((event: any) => {
-            this.pointerMove(event);
+            // console.log(this.commandIsDown);
+
+            if (this.commandIsDown && this.pointerIsDown) {
+                this.moveObjects(event);
+            } else {
+                this.pointerMove(event);
+            }
         });
 
         doubleClick$.subscribe((event: any) => {
@@ -192,10 +217,12 @@ export class InteractionService {
         switch (event.keyCode) {
             case 16:
                 this.isShiftDown = true;
-                console.log(this.isShiftDown);
+                // console.log(this.isShiftDown);
                 break;
             case 91:
                 this.commandIsDown = true;
+                this.controls.enablePan = false;
+                this.controls.enableZoom = false;
                 // console.log(this.isShiftDown);
                 break;
         }
@@ -209,6 +236,8 @@ export class InteractionService {
                 break;
             case 91:
                 this.commandIsDown = false;
+                this.controls.enablePan = true;
+                this.controls.enableZoom = true;
                 // console.log(this.isShiftDown);
                 break;
         }
@@ -219,8 +248,19 @@ export class InteractionService {
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
+
         // const intersects = this.raycaster.intersectObjects(this.objectService.objects);
+
         this.pointerMove$.next(true);
+    }
+
+    private moveObjects(event: MouseEvent): void {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+
+        this.moveObjects$.next(true);
     }
 
     private click(event: MouseEvent): void {

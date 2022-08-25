@@ -63,6 +63,9 @@ export class ThreeManager {
             console.log("ATACHING");
             this.objectManager.removeUnitFromSelectedGroup(object);
         });
+        this.controllerService.selector.requsteAnimation$.subscribe(() => {
+            this.renderEngine.requestRenderIfNotRequested();
+        });
         this.controllerService.requestAnimation$.subscribe(() => {
             this.renderEngine.requestRenderIfNotRequested();
         });

@@ -45,7 +45,7 @@ export class ControllerService {
         this.camera = camera;
         // this.objects = objects;
         this.unitCreator = new UnitCreator(this.camera);
-        console.log(this.objectManager);
+        // console.log(this.objectManager);
         this.selector = new Selector(this.camera);
         // this.dragAndDrop = new DragAndDrop(
         //     this.unitCreator.objects.filter((obj) => obj.name !== "plane"),
@@ -62,7 +62,7 @@ export class ControllerService {
         });
         this.interactionService.createInteractions(this.renderer.domElement, this.camera);
         this.interactionService.click$.subscribe((isShiftDown: boolean) => {
-            console.log(isShiftDown);
+            // console.log(isShiftDown);
 
             switch (this.currentController) {
                 case "selector":
@@ -87,15 +87,35 @@ export class ControllerService {
 
             this.requestAnimation$.next(true);
         });
+
+        this.interactionService.pointerIsDown$.subscribe(() => {
+            this.selector.onPointerDown(
+                this.interactionService.raycaster,
+                this.objectManager.objects,
+                false,
+                false,
+            );
+        });
         this.interactionService.pointerMove$.subscribe(() => {
             switch (this.currentController) {
                 case "selector":
-                    this.selector.onPointerMove(
-                        this.interactionService.raycaster,
-                        this.objectManager.objects.filter((obj) => obj.name !== "plane"),
-                        false,
-                        false,
-                    );
+                    // console.log("SELECTER OBJECT", this.objectManager.objects);
+
+                    if (this.interactionService.commandIsDown) {
+                        this.selector.moveObjects(
+                            this.interactionService.raycaster,
+                            this.objectManager.objects.filter((obj) => obj.name === "plane"),
+                            this.objectManager.selectedGroup.children,
+                        );
+                    } else {
+                        this.selector.onPointerMove(
+                            this.interactionService.raycaster,
+                            this.objectManager.objects.filter((obj) => obj.name !== "plane"),
+                            false,
+                            false,
+                        );
+                    }
+
                     break;
                 case "unitCreator":
                     this.unitCreator.onPointerMove(
@@ -113,13 +133,24 @@ export class ControllerService {
         });
 
         this.interactionService.dblClicked$.subscribe(() => {
-            console.log("DOUBLE CLICKED");
+            // console.log("DOUBLE CLICKED");
 
             if (this.currentController === "selector") {
-                this.selector.removeObjectFromGroup(
-                    this.interactionService.raycaster,
-                    this.objectManager.objects,
-                );
+                // this.selector.removeObjectFromGroup(
+                //     this.interactionService.raycaster,
+                //     this.objectManager.objects,
+                // );
+            }
+        });
+
+        this.interactionService.moveObjects$.subscribe(() => {
+            if (this.currentController === "selector") {
+                // console.log(this.selector.unitSelected);
+                // this.selector.moveObjects(
+                //     this.interactionService.raycaster,
+                //     this.objectManager.objects.filter((obj) => obj.name !== "plane"),
+                //     this.objectManager.selectedGroup.children,
+                // );
             }
         });
 

@@ -29,6 +29,8 @@ export class Selector {
 
     combinedUnits$: Subject<{ add: Cube; remove: THREE.Object3D[] }> = new Subject();
 
+    requsteAnimation$: Subject<boolean> = new Subject();
+
     constructor(camera: THREE.PerspectiveCamera) {
         // this.renderer = renderer;
         this.camera = camera;
@@ -128,8 +130,57 @@ export class Selector {
             }
         }
 
-        if (intersects.length > 0 && !shiftIsDown && moveIsEnabled && this.objectSelected) {
+        // if (intersects.length > 0 && !shiftIsDown && this.objectSelected) {
+        //     const intersect = intersects[0];
+
+        //     if (intersect.face && intersect) {
+        //         const original = new THREE.Vector3().copy(this.objectSelected.position);
+        //         const vect3 = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
+        //         vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+        //         // const faceHeight = intersect.object
+        //         console.log("MPOVING", this.unitSelected, this.objectSelected);
+        //         this.objectSelected.position.set(
+        //             vect3.x +
+        //                 (Math.floor(this.unitSelected.geometry.parameters.width / 50) - 1) * 25,
+        //             this.objectSelected.position.y,
+        //             vect3.z +
+        //                 (Math.floor(this.unitSelected.geometry.parameters.depth / 50) - 1) * 25,
+        //         );
+
+        //         const moveX = this.objectSelected.position.x - original.x;
+        //         const moveZ = this.objectSelected.position.z - original.z;
+        //         this.group.children.forEach((voxel) => {
+        //             if (this.objectSelected && voxel !== this.objectSelected) {
+        //                 voxel.position.x += moveX;
+        //                 voxel.position.z += moveZ;
+        //             }
+        //         });
+        //     }
+        // }
+    }
+
+    public moveObjects(
+        raycaster: THREE.Raycaster,
+        plane: THREE.Object3D[],
+        selectedGroup: THREE.Object3D[],
+    ): void {
+        // const meshes: THREE.Object3D[] = [];
+        // selectedGroup.forEach((parent) => {
+        //     parent.children.forEach((c) => {
+        //         if (c instanceof THREE.Mesh) {
+        //             meshes.push(c);
+        //         }
+        //     });
+        // });
+        // const selectedObject = raycaster.intersectObjects(meshes, false);
+
+        const intersects = raycaster.intersectObjects(plane, false);
+        // console.log(this.objectSelected);
+        // console.log("INTERSECTS", plane);
+
+        if (intersects.length > 0 && !this.isShiftDown && this.objectSelected) {
             const intersect = intersects[0];
+            // console.log("MOVING1");
 
             if (intersect.face && this.unitSelected instanceof THREE.Mesh) {
                 const original = new THREE.Vector3().copy(this.objectSelected.position);
@@ -147,7 +198,7 @@ export class Selector {
 
                 const moveX = this.objectSelected.position.x - original.x;
                 const moveZ = this.objectSelected.position.z - original.z;
-                this.group.children.forEach((voxel) => {
+                selectedGroup.forEach((voxel) => {
                     if (this.objectSelected && voxel !== this.objectSelected) {
                         voxel.position.x += moveX;
                         voxel.position.z += moveZ;
@@ -159,6 +210,7 @@ export class Selector {
 
     public onPointerUp(): void {
         // this.pointerIsDown = false;
+        this.objectSelected = null;
         // this.selectionBox.endPoint.set(
         //     (event.clientX / window.innerWidth) * 2 - 1,
         //     -(event.clientY / window.innerHeight) * 2 + 1,
@@ -202,11 +254,11 @@ export class Selector {
 
         if (intersects.length > 0 && !isCopying) {
             const intersect = intersects[0];
-            console.log(intersect);
+            // console.log(intersect);
             // delete cube
 
             if (isShiftDown) {
-                console.log(intersect.object);
+                // console.log(intersect.object);
 
                 if (intersect.object.name !== "plane") {
                     if (intersect.object.parent && intersect.object.parent.name === "unit") {
@@ -215,7 +267,7 @@ export class Selector {
                             //     intersect.object.material.color.set("red");
                             // }
 
-                            console.log("CLICK", this.group);
+                            // console.log("CLICK", this.group);
                             this.attachObjectToSelectedGroup$.next(intersect.object.parent);
                             // this.group.attach(intersect.object.parent);
                         }
@@ -225,16 +277,14 @@ export class Selector {
                 // move group
             } else {
                 if (intersect.face) {
-                    if (
-                        this.group.children.length > 0 &&
-                        intersect.object.parent &&
-                        this.group.children.includes(intersect.object.parent) &&
-                        intersect.object instanceof THREE.Mesh
-                    ) {
+                    // console.log("SELECTED", this.objectSelected);
+
+                    if (intersect.object.parent && intersect.object instanceof THREE.Mesh) {
                         this.objectSelected = intersect.object.parent;
                         this.unitSelected = intersect.object;
                     } else {
                         this.objectSelected = null;
+                        // console.log("UNSELECTED", this.objectSelected);
                         // const voxel = intersect.object;
                         // voxel.position.copy(intersect.point).add(intersect.face.normal);
                         // voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
@@ -278,7 +328,7 @@ export class Selector {
         //     }
         // }
 
-        console.log(raycaster, objects);
+        // console.log(raycaster, objects);
     }
 
     public onDocumentKeyDown(event: any): void {
