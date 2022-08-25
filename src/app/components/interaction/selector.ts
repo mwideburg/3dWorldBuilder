@@ -178,7 +178,12 @@ export class Selector {
         // console.log(this.objectSelected);
         // console.log("INTERSECTS", plane);
 
-        if (intersects.length > 0 && !this.isShiftDown && this.objectSelected) {
+        if (
+            intersects.length > 0 &&
+            !this.isShiftDown &&
+            this.objectSelected &&
+            selectedGroup.includes(this.objectSelected)
+        ) {
             const intersect = intersects[0];
             // console.log("MOVING1");
 
@@ -327,7 +332,6 @@ export class Selector {
         //         }
         //     }
         // }
-
         // console.log(raycaster, objects);
     }
 
