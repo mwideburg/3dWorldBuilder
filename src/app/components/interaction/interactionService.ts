@@ -196,11 +196,7 @@ export class InteractionService {
         pointerMove$.subscribe((event: any) => {
             // console.log(this.commandIsDown);
 
-            if (this.commandIsDown && this.pointerIsDown) {
-                this.moveObjects(event);
-            } else {
-                this.pointerMove(event);
-            }
+            this.pointerMove(event);
         });
 
         doubleClick$.subscribe((event: any) => {
@@ -219,25 +215,30 @@ export class InteractionService {
                 this.isShiftDown = true;
                 // console.log(this.isShiftDown);
                 break;
-            case 91:
+            case 83:
                 this.commandIsDown = true;
                 this.controls.enablePan = false;
                 this.controls.enableZoom = false;
-                // console.log(this.isShiftDown);
+                this.controls.enableRotate = false;
+                console.log("DISABLING CONTROLS");
                 break;
         }
     }
 
     private onDocumentKeyUp(event: any): void {
+        console.log(event.keyCode);
+
         switch (event.keyCode) {
             case 16:
                 this.isShiftDown = false;
 
                 break;
-            case 91:
+            case 83:
                 this.commandIsDown = false;
                 this.controls.enablePan = true;
                 this.controls.enableZoom = true;
+                this.controls.enableRotate = true;
+                console.log("ENABLING CONTROLS");
                 // console.log(this.isShiftDown);
                 break;
         }

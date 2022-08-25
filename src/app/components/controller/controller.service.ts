@@ -100,8 +100,12 @@ export class ControllerService {
             switch (this.currentController) {
                 case "selector":
                     // console.log("SELECTER OBJECT", this.objectManager.objects);
+                    // console.log(this.interactionService.pointerIsDown);
 
-                    if (this.interactionService.commandIsDown) {
+                    if (
+                        this.interactionService.commandIsDown &&
+                        this.interactionService.pointerIsDown
+                    ) {
                         this.selector.moveObjects(
                             this.interactionService.raycaster,
                             this.objectManager.objects.filter((obj) => obj.name === "plane"),
