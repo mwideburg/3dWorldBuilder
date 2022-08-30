@@ -10,8 +10,6 @@ export class BoxSelector {
 
     renderer: THREE.WebGLRenderer;
 
-    disabled: boolean = true;
-
     constructor(
         camera: THREE.PerspectiveCamera,
         scene: THREE.Scene,
@@ -30,7 +28,6 @@ export class BoxSelector {
 
     public disable(): void {
         console.log("DISABLE BOX SELECTOR", this.renderer);
-        this.disabled = true;
         this.helper.dispose();
         document.removeEventListener("pointerdown", this.pointerDown);
         document.removeEventListener("pointermove", this.pointerMove);
@@ -47,18 +44,12 @@ export class BoxSelector {
 
     public pointerDown(event: MouseEvent): void {
         console.log("POINTER DOWN SELECTION BOX");
-        console.log(this.disabled);
 
-        if (!this.disabled) {
-            console.log("DISABLED");
-            return;
-        }
-
-        this.selectionBox.collection.forEach((obj: any) => {
-            if (obj.name === "cube" && obj.material.emissive) {
-                obj.material.emissive.set(0xffffff);
-            }
-        });
+        // this.selectionBox.collection.forEach((obj: any) => {
+        //     if (obj.name === "cube") {
+        //         obj.material.color.set(0x000000);
+        //     }
+        // });
 
         this.selectionBox.startPoint.set(
             (event.clientX / window.innerWidth) * 2 - 1,
@@ -68,31 +59,27 @@ export class BoxSelector {
     }
 
     public pointerUp(event: MouseEvent): void {
-        if (!this.disabled) {
-            return;
-        }
-
         this.selectionBox.endPoint.set(
             (event.clientX / window.innerWidth) * 2 - 1,
             -(event.clientY / window.innerHeight) * 2 + 1,
             0.5,
         );
 
-        const allSelected = this.selectionBox.select();
+        // const allSelected = this.selectionBox.select();
 
-        allSelected.forEach((obj: any) => {
-            if (obj.name === "cube" && obj.material.emissive) {
-                obj.material.emissive.set(0xffffff);
-            }
-        });
+        // allSelected.forEach((obj: any) => {
+        //     if (obj.name === "cube") {
+        //         obj.material.color.set(0x000000);
+        //     }
+        // });
     }
 
     public pointerMove(event: MouseEvent): void {
         if (this.helper.isDown) {
-            console.log(this.selectionBox.collection);
             this.selectionBox.collection.forEach((obj: any) => {
                 if (obj.name === "cube") {
-                    obj.material.color.set(0x000000);
+                    console.log("CUBE OBJECT", obj);
+                    obj.material.color.set(0xaaaaaa);
                 }
             });
 
@@ -103,9 +90,10 @@ export class BoxSelector {
             );
 
             const allSelected = this.selectionBox.select();
+            console.log("POINTER MOVE SELECTED CUBE", allSelected);
             allSelected.forEach((obj: any) => {
-                if (obj.name === "cube" && obj.material.emissive) {
-                    obj.material.emissive.set(0xffffff);
+                if (obj.name === "cube") {
+                    obj.material.color.set(0x000000);
                 }
             });
         }
