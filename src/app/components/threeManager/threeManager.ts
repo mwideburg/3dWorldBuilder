@@ -52,18 +52,20 @@ export class ThreeManager {
 
         this.controllerService.selector.attachObjectToSelectedGroup$.subscribe(
             (object: THREE.Object3D) => {
-                if (this.objectManager.selectedGroup.children.includes(object)) {
-                    this.objectManager.removeUnitFromSelectedGroup(object);
-                    console.log("ATACHING");
-                } else {
-                    this.objectManager.addUnitToSelectedGroup(object);
-                }
+                this.objectManager.addUnitToSelectedGroup(object);
             },
         );
         this.controllerService.selector.attachObjectToScene$.subscribe((object: THREE.Object3D) => {
             console.log("ATACHING");
             this.objectManager.removeUnitFromSelectedGroup(object);
         });
+        this.controllerService.selector.selectSingleUnit$.subscribe(
+            (object: THREE.Object3D | null) => {
+                // console.log("ATACHING");
+                console.log("Selecting", object);
+                this.objectManager.selectSingleUnit(object);
+            },
+        );
         // this.controllerService.selector.requestAnimation$.subscribe(() => {
         //     this.renderEngine.requestRenderIfNotRequested();
         // });
@@ -94,6 +96,10 @@ export class ThreeManager {
         this.objectManager.addToScene$.subscribe((object: THREE.Object3D) => {
             this.scene.add(object);
         });
+        this.objectManager.removeFromScene$.subscribe((object: THREE.Object3D) => {
+            this.scene.remove(object);
+            this.objectManager.removeCubeObject(object);
+        });
         this.controllerService.combineUnits$.subscribe(() => {
             this.objectManager.combineUnitsIntoOne();
             this.renderEngine.requestRenderIfNotRequested();
@@ -101,6 +107,10 @@ export class ThreeManager {
 
         this.controllerService.selector.createCopyGroup$.subscribe(() => {
             this.objectManager.createCopyGroup();
+        });
+
+        this.objectManager.update$.subscribe(() => {
+            this.renderEngine.requestRenderIfNotRequested();
         });
     }
 }

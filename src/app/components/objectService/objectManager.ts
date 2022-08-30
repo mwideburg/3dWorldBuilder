@@ -16,9 +16,15 @@ export class ObjectManager {
 
     attachObjectToScene$: Subject<THREE.Object3D> = new Subject();
 
+    update$: Subject<boolean> = new Subject();
+
     isCopying: boolean = false;
 
     selectedGroup: THREE.Group = new THREE.Group();
+
+    selectedUnit: THREE.Object3D | null = null;
+
+    selectedUnitData$: Subject<THREE.Object3D | null> = new Subject();
 
     rollOverGroup: THREE.Group = new THREE.Group();
 
@@ -59,21 +65,26 @@ export class ObjectManager {
 
     public addUnitToSelectedGroup(object: THREE.Object3D): void {
         console.log(object);
-        object.children.forEach((mesh) => {
-            if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
-                mesh.material.color.set("red");
-            }
-        });
-        this.selectedGroup.attach(object);
+
+        if (this.selectedGroup.children.includes(object)) {
+            this.removeUnitFromSelectedGroup(object);
+        } else {
+            object.children.forEach((mesh) => {
+                if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
+                    mesh.material.color.set("red");
+                }
+            });
+            this.selectedGroup.attach(object);
+        }
     }
 
     public removeUnitFromSelectedGroup(object: THREE.Object3D): void {
-        this.selectedGroup.remove(object);
         object.children.forEach((mesh) => {
             if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
                 mesh.material.color.set(0xaaaaaa);
             }
         });
+        this.selectedGroup.remove(object);
         this.attachObjectToScene$.next(object);
     }
 
@@ -85,6 +96,7 @@ export class ObjectManager {
                 }
             });
         });
+        this.update$.next(true);
     }
 
     public recolorOriginalObjects(): void {
@@ -95,6 +107,7 @@ export class ObjectManager {
                 }
             });
         });
+        this.update$.next(true);
     }
 
     public combineUnitsIntoOne(): void {
@@ -181,5 +194,65 @@ export class ObjectManager {
         });
         this.rollOverGroup.clear();
         this.isCopying = false;
+    }
+
+    public changeLevelOfSelectedGroup(level: number): void {
+        console.log(level);
+        this.selectedGroup.children.forEach((child: THREE.Object3D) => {
+            child.position.y += level * 100;
+        });
+        this.update$.next(true);
+    }
+
+    public deselectAllUnits(): void {
+        this.recolorOriginalObjects();
+        const allUnits = this.getAllSelectedUnits();
+        allUnits.forEach((obj) => {
+            this.removeUnitFromSelectedGroup(obj);
+        });
+        // this.selectedGroup.clear();
+    }
+
+    private getAllSelectedUnits(): THREE.Object3D[] {
+        const allUnits: THREE.Object3D[] = [];
+        this.selectedGroup.children.forEach((obj) => {
+            allUnits.push(obj);
+        });
+        return allUnits;
+    }
+
+    public deleteSelectedUnits(): void {
+        const allUnits = this.getAllSelectedUnits();
+        console.log("ALL", allUnits);
+
+        this.deselectAllUnits();
+        allUnits.forEach((obj) => {
+            this.removeFromScene$.next(obj);
+        });
+    }
+
+    public setNameOfSingleUnit(name: string): void {
+        this.selectedGroup.children[0].name = name;
+    }
+
+    public selectSingleUnit(unit: THREE.Object3D | null): void {
+        if (unit) {
+            unit.children.forEach((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.material.color.set("black");
+                }
+            });
+        }
+
+        if (this.selectedUnit) {
+            this.selectedUnit.children.forEach((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.material.color.set(0xaaaaaa);
+                }
+            });
+        }
+
+        this.selectedUnit = unit;
+        this.selectedUnitData$.next(this.selectedUnit);
     }
 }

@@ -53,18 +53,6 @@ export class InteractionService {
 
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
-        // this.onDocumentKeyDown = this.onDocumentKeyDown.bind(this);
-        // this.onDocumentKeyUp = this.onDocumentKeyUp.bind(this);
-        // this.pointerMove = this.pointerMove.bind(this);
-
-        // document.addEventListener("keydown", this.onDocumentKeyDown);
-        // document.addEventListener("keyup", this.onDocumentKeyUp);
-        // Listen to the idleService to determine if the user is idle
-        // this.idleService.idle$.subscribe((isIdle: boolean) => {
-        //     this.idleCamera$.next(isIdle);
-        // });
-
-        // this.establishKeyboardListeners();
     }
 
     public initializeFromCanvas(canvasElement: HTMLCanvasElement): void {

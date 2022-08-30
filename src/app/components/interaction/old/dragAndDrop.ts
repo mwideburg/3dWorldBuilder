@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 import * as THREE from "three";
 // import { SelectionBox } from "three/examples/jsm/interactive/SelectionBox";
 // import { SelectionHelper } from "three/examples/jsm/interactive/SelectionHelper";
-import { Cube } from "../units/cube";
+import { Cube } from "../../units/cube";
 // import { Cube } from "../units/cube";
 // import { DragControls } from "three/examples/jsm/controls/DragControls";
 export class DragAndDrop {

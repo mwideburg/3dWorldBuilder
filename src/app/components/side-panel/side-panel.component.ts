@@ -60,6 +60,10 @@ export class SidePanelComponent implements OnInit {
                 }
             },
         );
+
+        // this.objectManager.selectedUnitData$.subscribe((unit) => {
+        //     this.selectedUnitData = unit;
+        // });
     }
 
     ngOnInit(): void {
@@ -93,6 +97,7 @@ export class SidePanelComponent implements OnInit {
         // Process checkout data here
         this.unitIsSelected = false;
         console.log("Naming unit", this.unitAttributes);
+        this.objectManager.setNameOfSingleUnit(this.unitAttributes.value.name);
         // this.controllerService.setName(this.unitAttributes.value.name);
         this.unitName = this.unitAttributes.value.name;
         this.unitAttributes.reset();
@@ -106,9 +111,8 @@ export class SidePanelComponent implements OnInit {
     }
 
     public changeGroupLevel(level: number): void {
-        if (this.currentCotroller === "dragAndDrop") {
-            this.controllerService.changeGroupLevel(level);
-        }
+        console.log(level);
+        this.objectManager.changeLevelOfSelectedGroup(level);
     }
 
     public swapOrientation(): void {
@@ -126,7 +130,11 @@ export class SidePanelComponent implements OnInit {
         this.objectManager.addRollOverGroup();
     }
 
-    public deselectAll(): void {
-        this.controllerService.deselectAll();
+    public deselectAllUnits(): void {
+        this.objectManager.deselectAllUnits();
+    }
+
+    public deleteSelectedUnits(): void {
+        this.objectManager.deleteSelectedUnits();
     }
 }
