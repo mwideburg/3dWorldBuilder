@@ -8,6 +8,7 @@ import { Dimension } from "../types/dimensionType";
 import { InteractionService } from "../interaction/interactionService";
 import { ObjectManager } from "../objectService/objectManager";
 import { Selector } from "../interaction/selector";
+import { BoxSelector } from "../interaction/boxSelector";
 // import { Cube } from "../units/cube";
 
 @Injectable({
@@ -21,6 +22,8 @@ export class ControllerService {
     unitCreator!: UnitCreator;
 
     selector!: Selector;
+
+    boxSelector!: BoxSelector;
 
     dragAndDrop!: DragAndDrop;
 
@@ -40,13 +43,18 @@ export class ControllerService {
         private objectManager: ObjectManager,
     ) {}
 
-    public createController(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
+    public createController(
+        camera: THREE.PerspectiveCamera,
+        renderer: THREE.WebGLRenderer,
+        scene: THREE.Scene,
+    ): void {
         this.renderer = renderer;
         this.camera = camera;
 
         this.unitCreator = new UnitCreator(this.camera);
 
         this.selector = new Selector(this.camera);
+        this.boxSelector = new BoxSelector(this.camera, scene, this.renderer);
 
         this.currentController$.next("unitCreator");
 
@@ -177,17 +185,28 @@ export class ControllerService {
     public controlSwitch(type: number): void {
         switch (type) {
             case 1:
+                this.interactionService.activate();
                 this.currentController$.next("selector");
                 this.unitCreator.disable();
+                this.boxSelector.disable();
                 // this.selector.activate();
                 break;
 
             case 2:
+                this.interactionService.activate();
                 this.currentController$.next("unitCreator");
                 this.selector.disable();
+                this.boxSelector.disable();
                 // this.unitCreator.activate();
                 break;
 
+            case 3:
+                this.currentController$.next("boxSelector");
+                this.unitCreator.disable();
+                this.selector.disable();
+                this.interactionService.disable();
+                this.boxSelector.activate();
+                break;
             default:
                 break;
         }

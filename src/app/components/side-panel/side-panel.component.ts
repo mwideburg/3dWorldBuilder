@@ -71,7 +71,7 @@ export class SidePanelComponent implements OnInit {
     }
 
     public controlSwitch(type: number): void {
-        console.log(type);
+        // console.log(type);
         this.controllerService.controlSwitch(type);
     }
 
@@ -87,7 +87,7 @@ export class SidePanelComponent implements OnInit {
             depth: Number(this.dimensions.value.depth) * 10,
             height: Number(this.dimensions.value.height) * 10,
         };
-        console.log("Dimensions changing", dimensions);
+        // console.log("Dimensions changing", dimensions);
         this.controllerService.setDimensions(dimensions);
         // this.dimensions.reset();
     }
@@ -96,7 +96,7 @@ export class SidePanelComponent implements OnInit {
         e.preventDefault();
         // Process checkout data here
         this.unitIsSelected = false;
-        console.log("Naming unit", this.unitAttributes);
+        // console.log("Naming unit", this.unitAttributes);
         this.objectManager.setNameOfSingleUnit(this.unitAttributes.value.name);
         // this.controllerService.setName(this.unitAttributes.value.name);
         this.unitName = this.unitAttributes.value.name;
@@ -111,7 +111,7 @@ export class SidePanelComponent implements OnInit {
     }
 
     public changeGroupLevel(level: number): void {
-        console.log(level);
+        // console.log(level);
         this.objectManager.changeLevelOfSelectedGroup(level);
     }
 

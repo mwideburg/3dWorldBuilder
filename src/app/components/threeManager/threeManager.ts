@@ -35,7 +35,11 @@ export class ThreeManager {
         this.scene.add(plane);
         this.objectManager.objects.push(plane);
         this.renderEngine.createRenderEngine(this.scene, this.camera);
-        this.controllerService.createController(this.camera, this.renderEngine.renderer);
+        this.controllerService.createController(
+            this.camera,
+            this.renderEngine.renderer,
+            this.scene,
+        );
         this.scene.add(this.controllerService.unitCreator.rollOverMesh);
 
         this.renderEngine.addControllerService(this.controllerService);

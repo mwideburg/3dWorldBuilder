@@ -74,7 +74,7 @@ export class UnitCreator {
     }
 
     public setDimensions(dimensions: Dimension): void {
-        console.log(dimensions);
+        // console.log(dimensions);
         this.dimensions = dimensions;
         const rollOverGeo = new THREE.BoxGeometry(
             this.dimensions.width,
@@ -144,7 +144,7 @@ export class UnitCreator {
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
-            console.log(intersects);
+            // console.log(intersects);
             // delete cube
 
             if (isShiftDown) {
@@ -152,7 +152,7 @@ export class UnitCreator {
 
                 if (intersect.object.name !== "plane") {
                     if (intersect.object.parent && intersect.object.parent.name === "unit") {
-                        console.log(intersect.object.parent.name);
+                        // console.log(intersect.object.parent.name);
                         // this.scene.remove(intersect.object.parent);
 
                         // this.objects.splice(this.objects.indexOf(intersect.object), 1);
@@ -172,9 +172,9 @@ export class UnitCreator {
                         .add(intersect.face.normal);
                     vect3.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
 
-                    const addXAxis = (this.dimensions.width / 2) % 50;
-                    const addZAxis = (this.dimensions.depth / 2) % 50;
-                    console.log(addXAxis, addZAxis);
+                    // const addXAxis = (this.dimensions.width / 2) % 50;
+                    // const addZAxis = (this.dimensions.depth / 2) % 50;
+                    // console.log(addXAxis, addZAxis);
                     voxel.group.position.set(
                         vect3.x + (Math.floor(this.dimensions.width / 50) - 1) * 25,
                         vect3.y + (Math.floor(this.dimensions.height / 50) - 1) * 25,

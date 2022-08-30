@@ -34,13 +34,13 @@ export class ObjectManager {
 
     public addMeshToObjects(mesh: THREE.Mesh): void {
         this.objects.push(mesh);
-        console.log(this.objects);
+        // console.log(this.objects);
     }
 
     public removeMeshFromObjects(mesh: THREE.Mesh): void {
         console.log("REMOVEING MESH", this.objects);
         this.objects = this.objects.filter((obj) => obj !== mesh);
-        console.log(this.objects);
+        // console.log(this.objects);
     }
 
     public addCubeObject(cube: THREE.Object3D): void {
@@ -64,7 +64,7 @@ export class ObjectManager {
     }
 
     public addUnitToSelectedGroup(object: THREE.Object3D): void {
-        console.log(object);
+        // console.log(object);
 
         if (this.selectedGroup.children.includes(object)) {
             this.removeUnitFromSelectedGroup(object);
@@ -143,7 +143,7 @@ export class ObjectManager {
         const cube = new Cube(dims);
         const position = new THREE.Vector3().add(positions[0]).add(positions[1]).divideScalar(2);
         cube.group.position.set(position.x, position.y, position.z);
-        console.log(this.objects);
+        // console.log(this.objects);
         this.objects = this.objects.filter((obj) => {
             return !meshes.includes(obj);
         });
@@ -197,7 +197,7 @@ export class ObjectManager {
     }
 
     public changeLevelOfSelectedGroup(level: number): void {
-        console.log(level);
+        // console.log(level);
         this.selectedGroup.children.forEach((child: THREE.Object3D) => {
             child.position.y += level * 100;
         });
@@ -223,7 +223,7 @@ export class ObjectManager {
 
     public deleteSelectedUnits(): void {
         const allUnits = this.getAllSelectedUnits();
-        console.log("ALL", allUnits);
+        // console.log("ALL", allUnits);
 
         this.deselectAllUnits();
         allUnits.forEach((obj) => {

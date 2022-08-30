@@ -301,7 +301,7 @@ export class DragAndDrop {
             // delete cube
 
             if (this.isShiftDown) {
-                console.log(intersect.object);
+                // console.log(intersect.object);
 
                 if (intersect.object.name !== "plane") {
                     if (intersect.object.parent && intersect.object.parent.name === "cube") {
@@ -435,8 +435,8 @@ export class DragAndDrop {
         const cube = new Cube(dims);
         const position = new THREE.Vector3().add(positions[0]).add(positions[1]).divideScalar(2);
         cube.group.position.set(position.x, position.y, position.z);
-        console.log("Objects BEFORE", this.objects);
-        console.log("Meshes", meshes);
+        // console.log("Objects BEFORE", this.objects);
+        // console.log("Meshes", meshes);
         this.objects = this.objects.filter((obj) => {
             return !meshes.includes(obj);
         });
@@ -446,7 +446,7 @@ export class DragAndDrop {
             add: cube,
             remove: this.group.children,
         });
-        console.log("OBJECTs", this.objects);
+        // console.log("OBJECTs", this.objects);
 
         this.group = new THREE.Group();
         this.scene.add(this.group);
@@ -492,7 +492,7 @@ export class DragAndDrop {
         });
         children.forEach((c) => this.scene.attach(c));
 
-        console.log(this.group);
+        // console.log(this.group);
         this.objectSelected = null;
     }
 }

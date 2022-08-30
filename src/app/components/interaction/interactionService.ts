@@ -195,6 +195,18 @@ export class InteractionService {
         });
     }
 
+    public disable(): void {
+        this.controls.enablePan = false;
+        this.controls.enableRotate = false;
+        this.controls.enableZoom = false;
+    }
+
+    public activate(): void {
+        this.controls.enablePan = true;
+        this.controls.enableRotate = true;
+        this.controls.enableZoom = true;
+    }
+
     private onDocumentKeyDown(event: any): void {
         switch (event.keyCode) {
             case 16:
@@ -212,7 +224,7 @@ export class InteractionService {
     }
 
     private onDocumentKeyUp(event: any): void {
-        console.log(event.keyCode);
+        // console.log(event.keyCode);
 
         switch (event.keyCode) {
             case 16:
