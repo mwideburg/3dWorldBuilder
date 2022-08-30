@@ -1,5 +1,5 @@
 import * as THREE from "three";
-
+import { Subject } from "rxjs";
 import { SelectionBox } from "three/examples/jsm/interactive/SelectionBox";
 import { SelectionHelper } from "three/examples/jsm/interactive/SelectionHelper";
 
@@ -9,6 +9,10 @@ export class BoxSelector {
     helper!: any;
 
     renderer: THREE.WebGLRenderer;
+
+    attachObjectToSelectedGroup$: Subject<THREE.Object3D> = new Subject();
+
+    attachObjectToScene$: Subject<THREE.Object3D> = new Subject();
 
     constructor(
         camera: THREE.PerspectiveCamera,
@@ -79,7 +83,7 @@ export class BoxSelector {
             this.selectionBox.collection.forEach((obj: any) => {
                 if (obj.name === "cube") {
                     console.log("CUBE OBJECT", obj);
-                    obj.material.color.set(0xaaaaaa);
+                    this.attachObjectToScene$.next(obj.parent);
                 }
             });
 
@@ -93,7 +97,7 @@ export class BoxSelector {
             console.log("POINTER MOVE SELECTED CUBE", allSelected);
             allSelected.forEach((obj: any) => {
                 if (obj.name === "cube") {
-                    obj.material.color.set(0x000000);
+                    this.attachObjectToSelectedGroup$.next(obj.parent);
                 }
             });
         }

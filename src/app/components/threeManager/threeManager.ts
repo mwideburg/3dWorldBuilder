@@ -59,6 +59,11 @@ export class ThreeManager {
                 this.objectManager.addUnitToSelectedGroup(object);
             },
         );
+        this.controllerService.boxSelector.attachObjectToSelectedGroup$.subscribe(
+            (object: THREE.Object3D) => {
+                this.objectManager.addUnitToSelectedGroup(object);
+            },
+        );
         this.controllerService.selector.attachObjectToScene$.subscribe((object: THREE.Object3D) => {
             console.log("ATACHING");
             this.objectManager.removeUnitFromSelectedGroup(object);
