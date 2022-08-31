@@ -16,11 +16,19 @@ export class Cube {
             transparent: true,
         });
         this.mesh = new THREE.Mesh(cubeGeo, cubeMaterial);
-        const edges = new THREE.EdgesGeometry(cubeGeo);
+        const edgesGeo = dimensions
+            ? new THREE.BoxGeometry(
+                  dimensions.width + 1,
+                  dimensions.height + 1,
+                  dimensions.depth + 1,
+              )
+            : new THREE.BoxGeometry(51, 101, 51);
+        const edges = new THREE.EdgesGeometry(edgesGeo);
         this.edges = new THREE.LineSegments(
             edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff }),
+            new THREE.LineBasicMaterial({ color: "white", linewidth: 50, linecap: "square" }),
         );
+
         this.mesh.name = "cube";
         this.group.name = "unit";
         this.group.add(this.mesh);
