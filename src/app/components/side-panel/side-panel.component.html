@@ -120,6 +120,25 @@
             <button style="margin-top: 5px;" mat-raised-button (click)="deleteSelectedUnits()" color="accent">Delete Selected Units</button>
         </div>
     </div>
+    <div *ngIf="currentCotroller === 'boxSelector'" style="border: 1px lightgray solid; display: flex; flex-direction: column; justify-content: center; padding: 25px; background-color: rgba(211, 211, 211, 0.695);">
+        
+        Change Level:
+        <div>
+            <button mat-raised-button (click)="changeGroupLevel(1)" color="primary">+</button>
+            <button mat-raised-button (click)="changeGroupLevel(-1)" color="primary">-</button>
+            
+        </div>
+        
+       
+       
+        
+        <div style="margin-top: 5px;">
+            <button style="margin-top: 5px;" mat-raised-button (click)="deselectAllUnits()" color="accent">Deselect All</button>
+        </div>
+        <div>
+            <button style="margin-top: 5px;" mat-raised-button (click)="deleteSelectedUnits()" color="accent">Delete Selected Units</button>
+        </div>
+    </div>
 
 </div>
 
