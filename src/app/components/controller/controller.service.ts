@@ -41,7 +41,12 @@ export class ControllerService {
     constructor(
         public interactionService: InteractionService,
         private objectManager: ObjectManager,
-    ) {}
+    ) {
+        this.enableBoxSelector = this.enableBoxSelector.bind(this);
+        this.disableBoxSelector = this.disableBoxSelector.bind(this);
+        document.addEventListener("keydown", this.enableBoxSelector);
+        document.addEventListener("keyup", this.disableBoxSelector);
+    }
 
     public createController(
         camera: THREE.PerspectiveCamera,
@@ -210,6 +215,30 @@ export class ControllerService {
                 break;
             default:
                 break;
+        }
+    }
+
+    private enableBoxSelector(e: KeyboardEvent): void {
+        // console.log(this.currentController);
+
+        if (e.key === "b" && this.currentController === "selector") {
+            this.interactionService.diasbleEventKeys();
+            this.interactionService.disable();
+            this.selector.disable();
+            this.boxSelector.activate();
+            this.currentController = "boxSelector";
+        }
+    }
+
+    private disableBoxSelector(e: KeyboardEvent): void {
+        // console.log(e);
+
+        if (e.key === "b" && this.currentController === "boxSelector") {
+            this.interactionService.activate();
+            // console.log(this.boxSelector);
+            this.currentController$.next("selector");
+            this.unitCreator.disable();
+            this.boxSelector.disable();
         }
     }
 }

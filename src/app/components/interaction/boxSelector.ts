@@ -29,12 +29,16 @@ export class BoxSelector {
         this.pointerMove = this.pointerMove.bind(this);
         this.pointerUp = this.pointerUp.bind(this);
 
-        console.log("CREATED BOX SELECTOR");
+        // console.log("CREATED BOX SELECTOR");
     }
 
     public disable(): void {
-        console.log("DISABLE BOX SELECTOR", this.renderer);
+        if (!this.helper) {
+            return;
+        }
+
         this.helper.dispose();
+        // console.log("DISABLE BOX SELECTOR", this.renderer);
         document.removeEventListener("pointerdown", this.pointerDown);
         document.removeEventListener("pointermove", this.pointerMove);
         document.removeEventListener("pointerup", this.pointerUp);
@@ -49,7 +53,7 @@ export class BoxSelector {
     }
 
     public pointerDown(event: MouseEvent): void {
-        console.log("POINTER DOWN SELECTION BOX");
+        // console.log("POINTER DOWN SELECTION BOX");
 
         this.selectionBox.collection.forEach((obj: any) => {
             if (obj.name === "cube") {
@@ -75,7 +79,7 @@ export class BoxSelector {
 
         allSelected.forEach((obj: any) => {
             if (obj.name === "cube") {
-                console.log("POINTER DOWN SELECTION BOX", obj);
+                // console.log("POINTER DOWN SELECTION BOX", obj);
                 obj.material.opacity = 1;
                 this.attachObjectToSelectedGroup$.next(obj.parent);
             }
@@ -87,7 +91,7 @@ export class BoxSelector {
         if (this.helper.isDown && this.pointerIsDown) {
             this.selectionBox.collection.forEach((obj: any) => {
                 if (obj.name === "cube") {
-                    console.log("CUBE OBJECT", obj);
+                    // console.log("CUBE OBJECT", obj);
                     obj.material.opacity = 1;
                     // obj.material.color.set(0xaaaaaa);
                 }
@@ -100,7 +104,7 @@ export class BoxSelector {
             );
 
             const allSelected = this.selectionBox.select();
-            console.log("POINTER MOVE SELECTED CUBE", allSelected);
+            // console.log("POINTER MOVE SELECTED CUBE", allSelected);
             allSelected.forEach((obj: any) => {
                 if (obj.name === "cube") {
                     // obj.material.color.set(0x000000);

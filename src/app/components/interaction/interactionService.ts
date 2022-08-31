@@ -235,7 +235,7 @@ export class InteractionService {
                 this.controls.enablePan = false;
                 this.controls.enableZoom = false;
                 this.controls.enableRotate = false;
-                console.log("DISABLING CONTROLS");
+                // console.log("DISABLING CONTROLS");
                 break;
         }
     }
@@ -253,7 +253,7 @@ export class InteractionService {
                 this.controls.enablePan = true;
                 this.controls.enableZoom = true;
                 this.controls.enableRotate = true;
-                console.log("ENABLING CONTROLS");
+                // console.log("ENABLING CONTROLS");
                 // console.log(this.isShiftDown);
                 break;
         }
