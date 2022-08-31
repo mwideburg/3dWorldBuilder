@@ -64,7 +64,7 @@ export class ObjectManager {
     }
 
     public addUnitToSelectedGroup(object: THREE.Object3D): void {
-        // console.log(object);
+        console.log(object);
 
         if (this.selectedGroup.children.includes(object)) {
             this.removeUnitFromSelectedGroup(object);
@@ -72,6 +72,7 @@ export class ObjectManager {
             object.children.forEach((mesh) => {
                 if (mesh instanceof THREE.Mesh && mesh.name === "cube") {
                     mesh.material.color.set("red");
+                    mesh.material.opacity = 1;
                 }
             });
             this.selectedGroup.attach(object);

@@ -72,6 +72,10 @@ export class SidePanelComponent implements OnInit {
 
     public controlSwitch(type: number): void {
         // console.log(type);
+        if (type === 3) {
+            this.objectManager.deselectAllUnits();
+        }
+
         this.controllerService.controlSwitch(type);
     }
 

@@ -57,16 +57,19 @@ export class ThreeManager {
         this.controllerService.selector.attachObjectToSelectedGroup$.subscribe(
             (object: THREE.Object3D) => {
                 this.objectManager.addUnitToSelectedGroup(object);
+                this.renderEngine.requestRenderIfNotRequested();
             },
         );
         this.controllerService.boxSelector.attachObjectToSelectedGroup$.subscribe(
             (object: THREE.Object3D) => {
                 this.objectManager.addUnitToSelectedGroup(object);
+                this.renderEngine.requestRenderIfNotRequested();
             },
         );
         this.controllerService.selector.attachObjectToScene$.subscribe((object: THREE.Object3D) => {
             console.log("ATACHING");
             this.objectManager.removeUnitFromSelectedGroup(object);
+            this.renderEngine.requestRenderIfNotRequested();
         });
         this.controllerService.selector.selectSingleUnit$.subscribe(
             (object: THREE.Object3D | null) => {

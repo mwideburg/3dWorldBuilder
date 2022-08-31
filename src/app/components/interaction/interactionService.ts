@@ -42,6 +42,8 @@ export class InteractionService {
 
     pointerIsDown: boolean = false;
 
+    eventKeyListenersDisabled: boolean = false;
+
     pointerIsDown$: Subject<boolean> = new Subject();
 
     constructor(public objectService: ObjectManager) {
@@ -98,6 +100,17 @@ export class InteractionService {
         document.addEventListener("keydown", this.onDocumentKeyDown);
         document.addEventListener("keyup", this.onDocumentKeyUp);
         return this.controls;
+    }
+
+    public diasbleEventKeys(): void {
+        document.removeEventListener("keydown", this.onDocumentKeyDown);
+        document.removeEventListener("keyup", this.onDocumentKeyUp);
+        this.eventKeyListenersDisabled = true;
+    }
+
+    public enableEventKeys(): void {
+        document.addEventListener("keydown", this.onDocumentKeyDown);
+        document.addEventListener("keyup", this.onDocumentKeyUp);
     }
 
     private establishPointerListeners(): void {
@@ -205,6 +218,10 @@ export class InteractionService {
         this.controls.enablePan = true;
         this.controls.enableRotate = true;
         this.controls.enableZoom = true;
+
+        if (this.eventKeyListenersDisabled) {
+            this.enableEventKeys();
+        }
     }
 
     private onDocumentKeyDown(event: any): void {

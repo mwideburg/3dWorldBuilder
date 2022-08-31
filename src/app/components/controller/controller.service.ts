@@ -202,9 +202,10 @@ export class ControllerService {
 
             case 3:
                 this.currentController$.next("boxSelector");
+                this.interactionService.diasbleEventKeys();
+                this.interactionService.disable();
                 this.unitCreator.disable();
                 this.selector.disable();
-                this.interactionService.disable();
                 this.boxSelector.activate();
                 break;
             default:

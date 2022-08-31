@@ -13,6 +13,7 @@ export class Cube {
             : new THREE.BoxGeometry(50, 100, 50);
         const cubeMaterial = new THREE.MeshBasicMaterial({
             color: 0xaaaaaa,
+            transparent: true,
         });
         this.mesh = new THREE.Mesh(cubeGeo, cubeMaterial);
         const edges = new THREE.EdgesGeometry(cubeGeo);

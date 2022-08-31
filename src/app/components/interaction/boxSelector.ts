@@ -14,6 +14,8 @@ export class BoxSelector {
 
     attachObjectToScene$: Subject<THREE.Object3D> = new Subject();
 
+    pointerIsDown: boolean = false;
+
     constructor(
         camera: THREE.PerspectiveCamera,
         scene: THREE.Scene,
@@ -49,12 +51,12 @@ export class BoxSelector {
     public pointerDown(event: MouseEvent): void {
         console.log("POINTER DOWN SELECTION BOX");
 
-        // this.selectionBox.collection.forEach((obj: any) => {
-        //     if (obj.name === "cube") {
-        //         obj.material.color.set(0x000000);
-        //     }
-        // });
-
+        this.selectionBox.collection.forEach((obj: any) => {
+            if (obj.name === "cube") {
+                // this.attachObjectToScene$.next(obj.parent);
+            }
+        });
+        this.pointerIsDown = true;
         this.selectionBox.startPoint.set(
             (event.clientX / window.innerWidth) * 2 - 1,
             -(event.clientY / window.innerHeight) * 2 + 1,
@@ -69,21 +71,25 @@ export class BoxSelector {
             0.5,
         );
 
-        // const allSelected = this.selectionBox.select();
+        const allSelected = this.selectionBox.select();
 
-        // allSelected.forEach((obj: any) => {
-        //     if (obj.name === "cube") {
-        //         obj.material.color.set(0x000000);
-        //     }
-        // });
+        allSelected.forEach((obj: any) => {
+            if (obj.name === "cube") {
+                console.log("POINTER DOWN SELECTION BOX", obj);
+                obj.material.opacity = 1;
+                this.attachObjectToSelectedGroup$.next(obj.parent);
+            }
+        });
+        this.pointerIsDown = false;
     }
 
     public pointerMove(event: MouseEvent): void {
-        if (this.helper.isDown) {
+        if (this.helper.isDown && this.pointerIsDown) {
             this.selectionBox.collection.forEach((obj: any) => {
                 if (obj.name === "cube") {
                     console.log("CUBE OBJECT", obj);
-                    this.attachObjectToScene$.next(obj.parent);
+                    obj.material.opacity = 1;
+                    // obj.material.color.set(0xaaaaaa);
                 }
             });
 
@@ -97,7 +103,8 @@ export class BoxSelector {
             console.log("POINTER MOVE SELECTED CUBE", allSelected);
             allSelected.forEach((obj: any) => {
                 if (obj.name === "cube") {
-                    this.attachObjectToSelectedGroup$.next(obj.parent);
+                    // obj.material.color.set(0x000000);
+                    obj.material.opacity = 0.5;
                 }
             });
         }
