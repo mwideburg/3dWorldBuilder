@@ -227,18 +227,23 @@ export class ControllerService {
             this.selector.disable();
             this.boxSelector.activate();
             this.currentController = "boxSelector";
+            this.boxSelector.keyIsDown = true;
         }
     }
 
     private disableBoxSelector(e: KeyboardEvent): void {
         // console.log(e);
 
-        if (e.key === "b" && this.currentController === "boxSelector") {
+        if (e.key === "b") {
             this.interactionService.activate();
             // console.log(this.boxSelector);
             this.currentController$.next("selector");
             this.unitCreator.disable();
-            this.boxSelector.disable();
+            this.boxSelector.keyIsDown = false;
+
+            if (!this.boxSelector.pointerIsDown) {
+                this.boxSelector.disable();
+            }
         }
     }
 }

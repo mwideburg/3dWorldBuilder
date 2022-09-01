@@ -32,6 +32,8 @@ export class InteractionService {
 
     pointerMove$: Subject<boolean> = new Subject();
 
+    pointerUp$: Subject<boolean> = new Subject();
+
     isShiftDown: boolean = false;
 
     commandIsDown: boolean = false;
@@ -162,6 +164,7 @@ export class InteractionService {
                 }, 50);
             }
 
+            this.pointerUp$.next(true);
             this.pointerIsDown = false;
             // console.log(this.evCache);
         });

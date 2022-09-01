@@ -141,4 +141,8 @@ export class SidePanelComponent implements OnInit {
     public deleteSelectedUnits(): void {
         this.objectManager.deleteSelectedUnits();
     }
+
+    public rotateGroup(): void {
+        this.objectManager.rotateSelectedGroup();
+    }
 }

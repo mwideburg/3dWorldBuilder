@@ -182,6 +182,7 @@ export class ObjectManager {
     }
 
     public createCopyGroup(): void {
+        this.deselectAllUnits();
         this.rollOverGroup.children.forEach((child: any) => {
             const cube = new Cube({
                 width: child.geometry.parameters.width,
@@ -192,6 +193,7 @@ export class ObjectManager {
             cube.group.position.set(child.position.x, child.position.y, child.position.z);
             this.addCubeObject(cube.group);
             this.addToScene$.next(cube.group);
+            this.addUnitToSelectedGroup(cube.group);
         });
         this.rollOverGroup.clear();
         this.isCopying = false;
@@ -199,9 +201,16 @@ export class ObjectManager {
 
     public changeLevelOfSelectedGroup(level: number): void {
         // console.log(level);
-        this.selectedGroup.children.forEach((child: THREE.Object3D) => {
-            child.position.y += level * 100;
-        });
+        if (this.rollOverGroup.children.length) {
+            this.rollOverGroup.children.forEach((child: THREE.Object3D) => {
+                child.position.y += level * 100;
+            });
+        } else {
+            this.selectedGroup.children.forEach((child: THREE.Object3D) => {
+                child.position.y += level * 100;
+            });
+        }
+
         this.update$.next(true);
     }
 
@@ -236,24 +245,30 @@ export class ObjectManager {
         this.selectedGroup.children[0].name = name;
     }
 
-    public selectSingleUnit(unit: THREE.Object3D | null): void {
-        if (unit) {
-            unit.children.forEach((child) => {
-                if (child instanceof THREE.Mesh) {
-                    child.material.color.set("black");
-                }
+    public rotateSelectedGroup(): void {
+        const orginVector = new THREE.Vector3();
+        orginVector.setFromMatrixPosition(this.selectedGroup.children[0].matrixWorld);
+        console.log(orginVector);
+
+        if (this.rollOverGroup.children.length) {
+            this.rollOverGroup.children.forEach((child: THREE.Object3D) => {
+                const currentVector = new THREE.Vector3().copy(child.position);
+                const differenceVector = new THREE.Vector3().copy(currentVector).sub(orginVector);
+
+                child.position.x = differenceVector.z;
+                // // child.position.y += differenceVector.x
+                child.position.z = differenceVector.x;
+            });
+        } else {
+            this.selectedGroup.children.forEach((child: THREE.Object3D) => {
+                const currentVector = new THREE.Vector3().copy(child.position);
+                const differenceVector = new THREE.Vector3().copy(currentVector).sub(orginVector);
+
+                child.position.x = differenceVector.z;
+                // // child.position.y += differenceVector.x
+                child.position.z = differenceVector.x;
             });
         }
-
-        if (this.selectedUnit) {
-            this.selectedUnit.children.forEach((child) => {
-                if (child instanceof THREE.Mesh) {
-                    child.material.color.set(0xaaaaaa);
-                }
-            });
-        }
-
-        this.selectedUnit = unit;
-        this.selectedUnitData$.next(this.selectedUnit);
+        // console.log(vector);
     }
 }

@@ -27,8 +27,6 @@ export class Selector {
 
     attachObjectToScene$: Subject<THREE.Object3D> = new Subject();
 
-    selectSingleUnit$: Subject<THREE.Object3D> = new Subject();
-
     combinedUnits$: Subject<{ add: Cube; remove: THREE.Object3D[] }> = new Subject();
 
     constructor(camera: THREE.PerspectiveCamera) {

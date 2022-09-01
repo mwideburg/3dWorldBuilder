@@ -16,6 +16,8 @@ export class BoxSelector {
 
     pointerIsDown: boolean = false;
 
+    keyIsDown: boolean = false;
+
     constructor(
         camera: THREE.PerspectiveCamera,
         scene: THREE.Scene,
@@ -37,11 +39,13 @@ export class BoxSelector {
             return;
         }
 
-        this.helper.dispose();
-        // console.log("DISABLE BOX SELECTOR", this.renderer);
+        // console.log("DIABLING BOX SELECTOR");
         document.removeEventListener("pointerdown", this.pointerDown);
         document.removeEventListener("pointermove", this.pointerMove);
         document.removeEventListener("pointerup", this.pointerUp);
+
+        this.helper.dispose();
+        // console.log("DISABLE BOX SELECTOR", this.renderer);
     }
 
     public activate(): void {
@@ -85,6 +89,10 @@ export class BoxSelector {
             }
         });
         this.pointerIsDown = false;
+
+        if (!this.keyIsDown) {
+            this.disable();
+        }
     }
 
     public pointerMove(event: MouseEvent): void {

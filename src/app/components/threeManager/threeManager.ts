@@ -71,13 +71,7 @@ export class ThreeManager {
             this.objectManager.removeUnitFromSelectedGroup(object);
             this.renderEngine.requestRenderIfNotRequested();
         });
-        this.controllerService.selector.selectSingleUnit$.subscribe(
-            (object: THREE.Object3D | null) => {
-                // console.log("ATACHING");
-                console.log("Selecting", object);
-                this.objectManager.selectSingleUnit(object);
-            },
-        );
+
         // this.controllerService.selector.requestAnimation$.subscribe(() => {
         //     this.renderEngine.requestRenderIfNotRequested();
         // });
