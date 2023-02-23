@@ -7,8 +7,6 @@ Some of the highlights of this project is the drag and drop box creating while m
 # Technologies
 The majority of code is three.js in an Angular Framework.
 
-# MsTemplate
-
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.1.1.
 
 ## Development server
