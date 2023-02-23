@@ -10,9 +10,9 @@ import { ThreeManager } from "../threeManager/threeManager";
     styleUrls: ["./canvas.component.scss"],
 })
 export class CanvasComponent implements AfterViewInit {
-    @ViewChild("renderCanvas", { static: true })
+    // @ViewChild("renderCanvas", { static: true })
     // public rendererCanvas: ElementRef<HTMLCanvasElement>;
-    public scene: THREE.Scene = new THREE.Scene();
+    // public scene: THREE.Scene = new THREE.Scene();
 
     // public controllerService: ControllerService;
 
