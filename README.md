@@ -1,3 +1,12 @@
+# 3d World Builder
+This project is a basic proof of concept that will be apart of a larger 3D Social World that I am currently working on. It focuses on being able to create simple 3D objects quickly and accurately. Write now it is only cubes, but the next couple iterations are goign to be introducing more complex objects.
+
+# Features
+Some of the highlights of this project is the drag and drop box creating while maintaining the camera controls. The snap to grid feature makes it easy and accurate to create objects. And then there is the box selector, by holding down "b" you enable a box selector tool that will select everythign with in your cursor's box, copy the selection and make easily repetative buildings quickly.
+
+# Technologies
+The majority of code is three.js in an Angular Framework.
+
 # MsTemplate
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.1.1.
