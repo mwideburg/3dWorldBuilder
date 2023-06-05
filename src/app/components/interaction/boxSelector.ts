@@ -49,7 +49,7 @@ export class BoxSelector {
     }
 
     public activate(): void {
-        this.helper = new SelectionHelper(this.renderer, "selectBox");
+        this.helper = new SelectionHelper(this.selectionBox, this.renderer, "selectBox");
 
         document.addEventListener("pointerdown", this.pointerDown);
         document.addEventListener("pointermove", this.pointerMove);
